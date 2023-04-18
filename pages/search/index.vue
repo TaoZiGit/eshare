@@ -8,24 +8,6 @@
 			
 				</view>
 			</view>
-			<view class="category">
-				<view class="lists">
-					<ul>
-						<li style="margin-right: 20px;"> 
-							<view class="flex-center" style="flex-direction: column;">
-								<h3 style="font-size:20px font-weight:700">非电子类资源</h3>
-								<image src="../../static/img/unelectronic.jpg" mode="scaleToFill" style="width: 75px;height: 63px;"></image>
-							</view>
-						</li>
-						<li>
-							<view class="flex-center" style="flex-direction: column;">
-								<h3 style="font-size:20px font-weight:700">电子类资源</h3>
-								<image src="../../static/img/electronic.jpg" mode="scaleToFill" style="width: 66px;height: 63px;"></image>
-							</view>
-						</li>
-					</ul>
-				</view>
-			</view>
 		</view>
 		<view class="nav">
 			<ul class="flex-center" style="gap:12px;">
@@ -33,7 +15,7 @@
 			</ul>
 		</view>
 			<view class="search-lists">
-				<view class="search-item" @click="Todeatil()">
+				<view class="search-item">
 					<view class="img" style="margin-top:16px;">
 						<view class="star">
 							<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
@@ -80,15 +62,6 @@
 		methods: {
 			changesearch(index){
 				this.currentTab=index
-			},
-			Todeatil(){
-				console.log(1)
-				uni.navigateTo({
-				  url: '/pages/detail/index', // 路由的页面路径
-				  success: function () {
-				    console.log('路由到其他页面成功');
-				  }
-				});
 			}
 		}
 	}
@@ -97,9 +70,6 @@
 <style lang="scss" scoped>
 	.header{
 		width: 375px;
-		height: 504rpx;
-		background-color: #ffc300;
-		clip-path: polygon(0 0, 100% 0, 100% 93%, 50% 100%, 0 93%);;
 		display:flex;
 		flex-direction: column;
 		align-items: center;

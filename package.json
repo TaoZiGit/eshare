@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "eslint-plugin-vue": "^4.7.1",
+    "swiper": "^9.2.2",
     "vuex": "^4.1.0"
   }
 }

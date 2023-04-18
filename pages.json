@@ -15,6 +15,18 @@
 		"style": {
 			"navigationBarTitleText": "uni-app"
 		}
+	},
+	{
+		"path": "pages/search/index",
+		"style": {
+			"navigationBarTitleText": "uni-app"
+		}
+	},
+	{
+		"path": "pages/detail/index",
+		"style": {
+			"navigationBarTitleText": "uni-app"
+		}
 	}
 	],
 	"globalStyle": {
