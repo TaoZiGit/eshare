@@ -16,6 +16,5 @@
 	/*每个页面公共css */
 html{
 	background-color: #f6f6f9;
-	box-sizing: border-box;
 }
 </style>

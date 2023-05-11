@@ -27,8 +27,114 @@
 		"style": {
 			"navigationBarTitleText": "uni-app"
 		}
+	},
+	{
+		"path": "pages/afford/index",
+		"style": {
+			"navigationBarTitleText": "uni-app"
+		}
+	},
+	{
+		"path": "pages/address/index",
+		"style": {
+			"navigationBarTitleText": "uni-app"
+		}
+	},
+	{
+		"path" : "pages/purchased/index",
+		"style" : {
+			"navigationBarTitleText": ""
+		}
+	},
+	{
+		"path" : "pages/collect/index",
+		"style" : {
+			"navigationBarTitleText": ""
+		}    
+	},
+	{
+		"path" : "pages/install/index",
+		"style" : {
+			"navigationBarTitleText": ""
+		}    
+	},
+	{
+		"path" : "pages/issue/index",
+		"style" : {
+			"navigationBarTitleText": ""
+		}    
+	},
+	{
+		"path" : "pages/like/index",
+		"style" : {
+			"navigationBarTitleText": ""
+		}    
 	}
-	],
+    ,{
+            "path" : "pages/myself/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/myself/edit",
+            "style" :               
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/myself/alter",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/myself/alter",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/chat/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+		    "path" : "pages/login/login",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/resgister/resgister",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+    ],
+	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -37,6 +143,32 @@
 		"navigationStyle":"custom",
 		"app-plus":{
 		"titleView":false
+		}
+	},
+	"tabBar":{
+		"color": "#ccc",
+		"selectedColor": "#333",
+		"list":[
+			{
+				"text": "首页",
+				"pagePath": "pages/index/index",
+				"iconPath": "static/home.png",
+				"selectedIconPath": "static/home-select.png"
+			},
+			
+			{
+				"text": "我的",
+				"pagePath": "pages/myself/index",
+				"iconPath": "static/myself.png",
+				"selectedIconPath": "static/myself-select.png"
+			}
+		],
+		"midButton":{
+			"text": "发布",
+			"height": "45px",
+			"pagePath": "pages/index/index",
+			"iconPath": "static/add.png",
+			"selectedIconPath": "static/add-select.png"
 		}
 	},
 	"uniIdRouter": {}

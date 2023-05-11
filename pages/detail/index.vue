@@ -47,7 +47,10 @@
 					<div class="title">资源介绍</div>
 				</view>
 				<view style="padding:10px 12px;font-size: 12px;line-height: 20px;font-weight: 400;color:rgba(31, 51, 73, 0.6);">
-					全新未拆封倍思wm02白色，爽快送耳机套壳。心动不如行动，感兴趣的话点“我想要”和我私聊吧~
+					<p style="  word-wrap: break-word;
+        word-break: break-all;
+        text-align: justify;">全新未拆封倍思wm02白色，爽快送耳机套壳。心动不如行动，感兴趣的话点“我想要”和我私聊吧klasjfasdilkfjasklfjasdklfjasfklafasklfjsaklfasdklfasklfasdfklsadfjasklfdjklasfj;lk</p>
+					
 				</view>
 			</view>
 			<view class="content">
@@ -61,30 +64,71 @@
 					<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg" size="30" style="margin-left: 10px;"></u-avatar>
 					<view style="background-color: #f5f5f5;border-radius: 20px;padding-left: 10px;margin-left: 10px;display: flex;align-items: center;width: 300px;color: #ccc;" @click="Commentfirst()">看对眼就留言,问问更多细节~</view>  
 				</view>
-				<view style="margin-top: 20px;">
+				<view style="margin-top: 20px;"  v-for="item of 2" :key="item">
 					<view class="commentlist">
 						<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg" size="30" style="margin-left: 10px;"></u-avatar>
-					<view style="display: flex;flex-direction: column;margin-left: 10px;">
-						<view>
-							<span class="commentname" style="font-weight: 700;">可乐</span>
-							<span class="createtime" style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">两天前</span>
+						<view style="display: flex;flex-direction: column;margin-left: 10px;">
+							<view>
+								<span class="commentname" style="font-weight: 700;">可乐</span>
+								<span class="createtime" style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">两天前</span>
+							</view>
+							<view style="display: flex;justify-content: flex-start;">
+								<view style="font-size: 14px;padding: 3px 0;width: 235px; word-wrap: break-word;word-break: break-all;text-align: justify;">
+									同学，那个倍思耳机的音质怎么样呀
+								</view>
+								<view style="display: flex;">
+									<view style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
+										<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20"></u-icon>
+										18
+									</view>
+									<view style="margin-left: 5px;">
+										<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20" @click="Commentfirst()"></u-icon>
+									</view>
+								</view>
+							</view>
+							<view class="commentlist" v-for="item of 2" :key="item" style="margin-top: 4px;justify-content: space-between;">
+								<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg" size="30" ></u-avatar>
+								<view style="display: flex;flex-direction: column;margin-left: 5px;">
+									<view>
+										<span class="commentname" style="font-weight: 700;font-size:15px">可乐</span>
+										<span class="createtime" style="padding-left: 5px;font-size: 12px;color: rgba(128, 128, 128, 0.4);">两天前</span>
+									</view>
+									<view style="display: flex;justify-content: flex-start;">
+										<view style="font-size: 13px;padding: 3px 0;width: 185px; word-wrap: break-word;word-break: break-all;text-align: justify;">
+											同学，那个倍思耳机的音质怎么样呀
+										</view>
+										<view style="display: flex;">
+											<view style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
+												<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20"></u-icon>
+												18
+											</view>
+											<view style="margin-left: 5px;">
+												<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20" @click="Commentfirst()"></u-icon>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+							
 						</view>
-						<view style="font-size: 15px;padding: 3px 0;">
-							同学，那个倍思耳机的音质怎么样呀
-						</view>
+						
 					</view>
-					</view>
-				</view>
+			</view>
 			</view>
 		</view>
 		<uni-popup ref="popup" type="bottom" >
 			<view class="popupcomment">
-				<textarea auto-height  placeholder="看对眼就留言,问问更多细节~" style="padding: 10px;"/>
-				<u-button type="success" style="height: 30px; ;width: 60px;border-radius: 20px;margin: 10px 0;">发送</u-button>
+				<textarea auto-height  placeholder="看对眼就留言,问问更多细节~" style="padding: 10px;" focus/>
+				<view class="flex-center" style="height: 30px; ;width: 60px;border-radius: 20px;margin: 10px 0;background-color: #ffc300;border: 0;font-size: 14px;font-weight: 700;" >发送</view>
 			</view>
-			
 		</uni-popup>
-
+		<view class="botton">
+			<view class="seller">
+				<u-icon name="kefu-ermai" color="rgba(0, 0, 0, 0.7)" size="24"></u-icon>
+				联系他~
+			</view>
+			<view class="buybtn flex-center">立即购买</view>
+		</view>
 	</view>
 
 </template>
@@ -264,5 +308,36 @@
 	}
 	.commentlist{
 		display: flex;
+		align-items: flex-start;
+	}
+	.botton{
+		width: 375px;
+		height: 52px;
+		background: rgba(255, 255, 255, 1);
+		box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);
+		position: fixed;
+		bottom:0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		.seller{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		.buybtn{
+			width: 150px; 
+			height: 40px;
+			margin-right:16px;
+			border-radius: 20px;
+			font-size: 14px;
+			color: #fff;
+			background: rgba(255, 195, 0, 1);
+			box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);
+			// border: 0;
+			
+		}
 	}
 </style>

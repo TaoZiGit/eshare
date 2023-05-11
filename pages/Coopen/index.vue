@@ -33,7 +33,7 @@ export default{
 	methods:{
 		Toindex(){
 			console.log(1)
-			uni.navigateTo({
+			uni.switchTab({
 				url:"/pages/index/index"
 			})
 		}

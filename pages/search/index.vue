@@ -16,7 +16,7 @@
 		</view>
 			<view class="search-lists">
 				<view class="search-item">
-					<view class="img" style="margin-top:16px;">
+					<view class="img" style="margin:16px;">
 						<view class="star">
 							<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
 							<span style="line-height: 20px;padding-left: 2px;">12</span>
@@ -74,7 +74,7 @@
 		flex-direction: column;
 		align-items: center;
 		.search{
-			width: 315px;
+			width: 340px;
 			height: 42px;
 			margin:44px 25px 5px 26px;
 		
