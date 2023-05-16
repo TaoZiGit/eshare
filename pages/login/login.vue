@@ -31,12 +31,13 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 <script>
 import {getCode,Login} from '@/api/user.js'
 import {emailRegex} from '@/utils/regular.js'
+import {setToken,getToken} from '@/utils/Token.js'
 	export default {
 		data() {
 			return {
 				email:'444186682@qq.com',
 				checkcodetime:0,
-				checkcode:"UQ9Tz",
+				checkcode:"",
 			}
 		}, 
 		methods:{
@@ -66,10 +67,12 @@ import {emailRegex} from '@/utils/regular.js'
 			},
 			async login(){
 				let result=await Login({email:this.email,checkCode:this.checkcode})
+				setToken(result.data)
 				uni.showToast({
 					title:'登录成功',
 					icon:'success'
 				})
+				
 			}
 			
 		}

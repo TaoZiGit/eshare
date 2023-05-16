@@ -1,5 +1,8 @@
 <script>
 	export default {
+		globalData: {
+			token:""
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
@@ -14,7 +17,7 @@
 
 <style>
 	/*每个页面公共css */
-html{
-	background-color: #f6f6f9;
-}
+	body {
+		background-color: #f6f6f9;
+	}
 </style>

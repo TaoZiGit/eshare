@@ -1,17 +1,19 @@
 import api from './api.js'
-export const getindex=async(data)=>{
+export const CommentAll=async(data)=>{
 	let result =await api({
-		url:'/resource/all',
+		url:'/comment/all',
 		method:'GET',
 		data,
 	})
 	return result
 }
-export const getDeatil=async(data)=>{
+
+export const CommentAdd=async(data)=>{
 	let result =await api({
-		url:'/resource/info',
-		method:'GET',
+		url:'/comment/add',
+		method:'PUT',
 		data,
 	})
 	return result
 }
+

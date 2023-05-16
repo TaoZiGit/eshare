@@ -32,10 +32,18 @@ export default{
 	},
 	methods:{
 		Toindex(){
-			console.log(1)
-			uni.switchTab({
-				url:"/pages/index/index"
-			})
+			let token=getToken()
+			console.log(token)
+			if(token){
+				uni.switchTab({
+					url:"/pages/index/index"
+				})
+			}else{
+				uni.navigateTo({
+					url:"/pages/login/login"
+				})
+			}
+			
 		}
 	},
 	onLoad(option){

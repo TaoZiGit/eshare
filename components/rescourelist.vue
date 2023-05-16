@@ -1,6 +1,6 @@
 <template>
 	<view class="search-lists">	
-				<view class="search-item" @click="Todeatil()" v-for="item in list.resourcesList" :key="item.id">
+				<view class="search-item" @click="Todeatil(item.id)" v-for="item in list" :key="item.id">
 					<view class="img" style="margin:16px;" :style="{ backgroundImage: 'url(' + item.photourl + ')' }">
 						<view class="star">
 							<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
@@ -31,14 +31,15 @@
 		},
 		props:{
 			list:{
-				type: Object,
-				default: ()=>{}
+				type: Array,
+				default: ()=>[]
 			}
 		},
 		methods: {
-			Todeatil(){
+			Todeatil(id){
+				console.log(id)
 				uni.navigateTo({
-				  url: '/pages/detail/index', // 路由的页面路径
+				url:'/pages/detail/index?id='+id,
 				  success: function () {
 				    console.log('路由到其他页面成功');
 				  }

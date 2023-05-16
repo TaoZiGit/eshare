@@ -53,9 +53,9 @@ export default {
 				})
 			}
 		},
-		// resgister(){
+		resgister(){
 			
-		// }
+		}
 	}
 }
 </script>

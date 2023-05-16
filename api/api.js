@@ -1,12 +1,17 @@
 const api=(Option)=>{
 	let baseURL='http://47.115.220.70:8888/system'
+	let url=baseURL+Option.url;
+	if (Option.data) {
+	  url+='?'+Object.keys(Option.data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(Option.data[key])).join('&')
+	} 
 	return new Promise((resolve,reject)=>{
 		uni.showLoading({
 			title:'加载中'
 		})	
 		uni.request({
-			url:baseURL+Option.url+ '?' + Object.keys(Option.data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(Option.data[key])).join('&'),
+			url,
 			method:Option.method||'GET',
+			header:Option.headers,
 			success:res=>{
 				uni.hideLoading()
 				if(res.data.code==200)

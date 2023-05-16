@@ -2,6 +2,8 @@ import App from './App'
 import uView from '@/uni_modules/uview-ui'
 // #ifndef VUE3
 import Vue from 'vue'
+import store from './store/index.js'
+Vue.prototype.$store=store
 Vue.config.productionTip = false
 App.mpType = 'app'
 Vue.use(uView)
