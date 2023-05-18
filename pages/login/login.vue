@@ -66,13 +66,16 @@ import {setToken,getToken} from '@/utils/Token.js'
 				}
 			},
 			async login(){
-				let result=await Login({email:this.email,checkCode:this.checkcode})
+				let result=await Login({email:this.email,checkCode:this.checkcode.trim()})
+				console.log(result)
 				setToken(result.data)
 				uni.showToast({
 					title:'登录成功',
 					icon:'success'
 				})
-				
+				uni.switchTab({
+					url:"/pages/index/index"
+				})
 			}
 			
 		}

@@ -15,3 +15,12 @@ export const getDeatil=async(data)=>{
 	})
 	return result
 }
+
+export const TfileUpload=async(data)=>{
+	let result =await api({
+		url:'/tfile/upload',
+		method:'POST',
+		data,
+	})
+	return result
+}

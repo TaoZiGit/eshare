@@ -2,7 +2,7 @@
 	<view>
 		<header>
 			<u-icon name="arrow-left" size="20" style="margin-left: 5px;"></u-icon>
-			<view style="position: absolute;left:50%;transform: translateX(-50%);">我发布的</view>
+			<view style="position: absolute;left:50%;transform: translateX(-50%);">收藏</view>
 		</header>
 		
 	</view>
@@ -25,11 +25,13 @@
 <style lang="scss" scoped>
 header{
 	width: 375px;
-	height: 44px;
+	height: 70px;
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	font-weight: 700;
-	position: relative;
+	position: relative;	
+	background-color: #ffffff;
+	padding-bottom: 5px;
 	
 }
 </style>

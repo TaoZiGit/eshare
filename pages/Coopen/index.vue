@@ -24,6 +24,7 @@
 
 <script>
 import { setToken,getToken,removeToken } from "@/utils/Token.js"
+import {UserGetUserMessage} from "@/api/user.js"
 export default{
 	data(){
 		return {
@@ -31,10 +32,11 @@ export default{
 		}
 	},
 	methods:{
-		Toindex(){
+		async Toindex(){
 			let token=getToken()
 			console.log(token)
 			if(token){
+				let result=await UserGetUserMessage()
 				uni.switchTab({
 					url:"/pages/index/index"
 				})

@@ -1,12 +1,18 @@
 import {getToken} from '@/utils/Token.js'
+import {UserUpdateUserMessage} from "@/api/user.js"
 const state={ 
 	token:"",
-	info:{},
+	info:{
+		id:'1a0926236fd9440d589a7f21372911b6'
+	},
 };
 
 const mutations={
 	SETTOKEN(state,token){
 		state.token=token
+	},
+	ALTERIMFO(state,info){
+		state.info=info
 	}
 }
 const actions={
@@ -14,6 +20,10 @@ const actions={
 		let token=getToken();
 		console.log(token)
 		commit("SETTOKEN",token);
+	},
+	async alterinfo({commit},info){
+		let result=await UserUpdateUserMessage({info});
+		commit("ALTERIMFO",info);
 	}
 }
 const getters={

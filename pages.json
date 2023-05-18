@@ -48,6 +48,11 @@
 		}    
 	},
 	{
+		"path" : "pages/money/index",
+		"style" : {
+		}    
+	},
+	{
 		"path" : "pages/install/index",
 		"style" : {
 		}    
@@ -72,15 +77,6 @@
 			"enablePullDownRefresh": false
 		}
 		
-        }
-        ,{
-            "path" : "pages/myself/edit",
-            "style" :               
-            {
-                
-                "enablePullDownRefresh": false
-            }
-            
         }
         ,{
             "path" : "pages/myself/alter",

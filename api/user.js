@@ -25,6 +25,26 @@ export const UserGetUserMessage=async()=>{
 		method:'GET',
 		headers:{token:getToken()},
 	})
-	store.state.info=result.data
+	store.state.token=getToken()
+	store.state.info= JSON.parse(JSON.stringify(result.data))
+	return result
+}
+export const UserUpdateUserMessage=async(data)=>{
+	let result =await api({
+		url:'/user/updateUserMessage',
+		method:'POST',
+		data,
+		headers:{token:getToken()},
+	})
+	return result
+}
+export const PayAdd=async(data)=>{
+	
+	let result =await api({
+		url:'/pay/add',
+		method:'PUT',
+		data,
+	})
+	UserGetUserMessage()
 	return result
 }

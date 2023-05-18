@@ -12,6 +12,7 @@ const api=(Option)=>{
 			url,
 			method:Option.method||'GET',
 			header:Option.headers,
+			data:Option.params,
 			success:res=>{
 				uni.hideLoading()
 				if(res.data.code==200)

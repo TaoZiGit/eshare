@@ -3,36 +3,59 @@
 		<header>
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">个人中心</view>
 		</header>
-		<view style="display: flex;align-items: center;">
-			<view style="margin-left: 16px;">
-				<u-avatar src="https://img.js.design/assets/img/62c2a7cc4835c7f3c1ce3c79.png" size="64" ></u-avatar>
-			</view>
-			<view style="margin-left: 10px;">
-				<view class="name">
-					黄英迪
+		<view style="border-radius: 8px;
+	background: rgba(255, 255, 255, 1);width: 344px;margin: 0 auto;">
+			<view style="display: flex;align-items: center;">
+				<view style="margin: 6px;" >
+					<u-avatar src="" size="50" ></u-avatar>
 				</view>
-				<view class="adress">
-					所在地：桂林电子大学
+				
+				<view style="margin-left: 10px;">
+					<view class="name">
+						{{info.name?info.name:'用户'+info.email}}
+					</view>
+					<view class="adress">
+						所在地：{{info.address?info.address:'暂无'}}
+					</view>
+				</view>
+				<view class="setting flex-center" @click="ToAlter()">
+					<u-icon name="setting-fill" size="16"  ></u-icon>
 				</view>
 			</view>
-			<view class="setting flex-center">
-				<u-icon name="setting-fill" size="16"></u-icon>
+			<view class="introduce">
+				{{info.description?info.description:'这个家伙很神秘，没有写个人简介'}}
 			</view>
+			<section class="buyandsell" style="margin: 0;">
+				<ul>
+					<li class="flex-center" @click="Tocollect()">
+						<span>{{info.collectionsnum}}</span>
+							<span>收藏</span>
+					</li>
+					<li class="flex-center">
+						<span>{{info.followersnum}}</span>
+						<span>关注</span>
+					</li>
+					<li class="flex-center">
+						<span>{{info.myfollowersnum}}</span>
+						<span>粉丝</span>
+					</li>
+				</ul>
+			</section>
 		</view>
+		
 		<section class="coin">
 			<view class="coin-icon flex-center">
 					<u-icon name="rmb-circle" size="16"></u-icon>
 			</view>
-			<view class="remaining">
+			<view class="remaining" @click="Tomoney()">
 				<view style="font-size: 18px;font-weight: 700;">
-					65.00
+					{{info.money!==undefined?info.money.toFixed(2):0}}
 				</view>
-				<view style="font-size: 12px;font-weight: 400;color: rgba(31, 51, 73, 0.6);padding-top: 5px;">
+				<view style="font-size: 12px;font-weight: 400;color: rgba(31, 51, 73, 0.6);padding-top: 5px;"> 
 					零钱余额
 				</view>
 			</view>
 		</section>
-		
 		<section class="buyandsell">
 			<ul>
 				<li class="flex-center">
@@ -71,26 +94,60 @@
 </template>
 
 <script>
-	
+	import{UserGetUserMessage} from "@/api/user.js"
+	import {mapState} from "vuex";
+import { getToken } from "../../utils/Token";
 	export default {
 		data() {
 			return {
+				
 			}
 		},
 		methods: {
+			async getuserList() {
+				let result = await UserGetUserMessage(getToken());
+			},
+			ToAlter(){
+				uni.navigateTo({
+					url:'/pages/myself/alter'
+				})
+			},
+			Tocollect(){
+				uni.navigateTo({
+					url:'/pages/collect/index'
+				})
+			},
+			Tomoney(){
+				uni.navigateTo({
+					url:'/pages/money/index'
+				})
+			}
 			
-		}
+		},
+		onLoad() {
+			if(!this.token){
+				this.getuserList()
+			}
+			console.log(this.info,this.token)
+		},
+		computed: {
+			...mapState({
+				token: (state) => state.user.token,
+				info: (state) => state.user.info,
+			}),
+		},
 	}
 </script>
 
 <style lang="scss" scoped>
 header{
 	width: 375px;
-	height: 44px;
+	height: 70px;
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	font-weight: 700;
 	position: relative;
+	background-color: #ffffff;
 }
 .name{
 	font-weight: 700;
@@ -108,6 +165,11 @@ header{
 	background: rgba(255, 195, 0, 1);
 	margin-left: auto;
 	margin-right:16px;
+}
+.introduce{
+	padding: 10px 10px 0 10px;
+	overflow-wrap: break-word;
+	font-size: 14px;
 }
 .coin{
 	left: 15px;
@@ -146,6 +208,15 @@ header{
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			position: relative;
+			&:not(:nth-child(1))::before{
+				content: "";
+				position: absolute;
+				left:0;
+				width: 1px;
+				height: 50%;
+				background-color:rgba(31, 51, 73, 0.05);
+			}
 			image{
 				width: 24px;
 				height: 24px;

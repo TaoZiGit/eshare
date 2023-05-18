@@ -1,11 +1,10 @@
 <template>
 	<view>
 		<header>
-			<u-icon name="arrow-left" size="20" style="margin-left: 5px;"></u-icon>
+			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routeback"></u-icon>
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">编辑资料</view>
 			<u-icon name="checkmark" size="20" style="margin-left: auto; margin-right: 10px;"></u-icon>
 		</header>
-	
 		<section style="background-color: #fff;">
 			<span style="color: #a5a5a5;margin: 10px;font-weight: 700;font-size: 14px;">基本信息</span>
 			<ul>
@@ -13,8 +12,8 @@
 					<view class="left">
 						头像
 					</view>
-					<view class="right">
-						<u-avatar src="http://pic2.sc.chinaz.com/Files/pic/pic9/202002/hpic2119_s.jpg" size="35"></u-avatar>
+					<view class="right" @click="changeavator()">
+						<u-avatar :src="info.avator" size="35"></u-avatar>
 					<u-icon name="arrow-right" size="10" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -23,8 +22,8 @@
 					<view class="left">
 						昵称
 					</view>
-					<view class="right">
-						<span>estrella</span>
+					<view class="right" @click="popupinfo('name')">
+						<span>{{info.name?info.name:'用户'+info.email}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -33,8 +32,8 @@
 					<view class="left">
 						性别
 					</view>
-					<view class="right">
-						<span>男</span>
+					<view class="right"  @click="popupinfo('sex')">
+						<span>{{info.sex?info.sex:'暂无性别'}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -44,7 +43,7 @@
 						邮箱
 					</view>
 					<view class="right">
-						<span>444186682@qq.com</span>
+						<span>{{info.email}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -53,8 +52,8 @@
 					<view class="left">
 						电话
 					</view>
-					<view class="right">
-						<span>17707830245</span>
+					<view class="right"  @click="popupinfo('phone')">
+						<span>{{info.phone}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -63,8 +62,8 @@
 					<view class="left">
 						地址
 					</view>
-					<view class="right">
-						<span>桂林电子科技大学</span>
+					<view class="right"  @click="popupinfo('address')">
+						<span>{{info.address?info.address:'暂无地址'}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -73,27 +72,108 @@
 					<view class="left">
 						简介
 					</view>
-					<view class="right">
-						<span>叽里呱啦叽里呱啦叽里呱啦叽里呱啦叽里啦叽里呱啦叽里呱啦叽里呱啦叽里呱啦叽里啦叽里呱啦叽里呱啦叽里呱啦叽里呱啦叽里啦</span>
+					<view class="right"  @click="popupinfo('description')">
+						<span>{{info.description?info.description:'这个人很懒，暂无简介'}}</span>
 					<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
 				<u-line />
 			</ul>
 		</section>
+		<uni-popup ref="popup" type="bottom">
+			<view class="popupsex" v-if="selectedOption==
+'sex'">
+			<view class="" @click="ChangeSex('男')"> 
+				男
+			</view>
+			<view class=""  @click="ChangeSex('女')">
+				女
+			</view>
+			</view>
+			<view class="popupcomment" v-else>
+				<textarea auto-height style="padding: 10px;" focus v-model="inputValue" />
+				<view class="flex-center"
+					style="height: 30px; ;width: 60px;border-radius: 20px;margin: 10px 0;background-color: #ffc300;border: 0;font-size: 14px;font-weight: 700;"
+					@click="ChangeInfo()">保存</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	
+	import {TfileUpload} from '@/api/resource.js'
+	import{UserGetUserMessage} from "@/api/user.js"
+	import {mapState} from "vuex";
+	import { getToken } from "../../utils/Token";
 	export default {
 		data() {
 			return {
-				
+				imageStyles: {
+					width: 55,
+					height: 55,
+					border: {
+						radius: '50%'
+					}
+				},
+				changeinfo:{
+				},
+				selectedOption:'name',
 			}
 		},
 		methods: {
-			
+			routeback(){
+				
+				uni.navigateBack({
+					delta: 1, 
+				});
+			},
+			async getuserList() {
+				let result = await UserGetUserMessage();
+				console.log(result)
+				this.changeinfo=result.data
+			},
+			changeavator(){
+				let _this=this
+				uni.chooseImage({
+					count: 1,
+					sourceType: ["album", "camera"],
+					success: async(res) => {
+						console.log(res)
+						let result=await TfileUpload({file: [res.tempFiles][0][0].path});
+						console.log(result)
+						// _this.changeinfo.avator =;
+					},
+				});
+			},
+			popupinfo(item){
+				this.$refs.popup.open('bottom');
+				this.selectedOption=item;
+				this.$refs.popup.close();
+			},
+			ChangeInfo(){
+				this.$store.dispatch("alterinfo",this.changeinfo)
+			},
+			ChangeSex(item){
+				this.$set(this.changeinfo, 'sex', item);
+				this.$store.dispatch("alterinfo",this.changeinfo)
+				this.$refs.popup.close();
+			}
+		},
+		onLoad(){
+			this.getuserList()
+		},
+		computed:{
+			inputValue:{
+				get(){
+					return this.changeinfo[this.selectedOption];
+				},
+				set(value){
+					 this.changeinfo[this.selectedOption]=value;			}
+			},
+			...mapState({
+				token: (state) => state.user.token,
+				info: (state) => state.user.info,
+			}),
 		}
 	}
 </script>
@@ -101,11 +181,13 @@
 <style lang="scss" scoped>
 header{
 	width: 375px;
-	height: 44px;
+	height: 70px;
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	font-weight: 700;
 	position: relative;	
+	background-color: #ffffff;
+	padding-bottom: 5px;
 }
 ul{
 	li{
@@ -129,6 +211,27 @@ ul{
 				text-align: right;
 			}
 		}
+	}
+}
+.popupcomment {
+	border-radius: 10px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	background-color: #fff;
+	display: flex;
+}
+.popupsex{
+	background-color: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	view{
+		width: 100%;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+		border-bottom: 1px solid rgb(214, 215, 217);
 	}
 }
 </style>

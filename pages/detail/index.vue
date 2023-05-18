@@ -190,6 +190,7 @@
 					current: 1,
 					size: 5,
 					rid: null,
+					commenttype:'first',
 				},
 				commentlist: [],
 			};
@@ -201,8 +202,13 @@
 
 			},
 			Commentfirst() {
+				this.commentinfo.commenttype='first';
 				this.$refs.popup.open('bottom');
 
+			},
+			CommentSecond(){
+				this.commentinfo.commenttype='second';
+				this.$refs.popup.open('bottom');
 			},
 			clickItem(e) {
 				this.swiperDotIndex = e
