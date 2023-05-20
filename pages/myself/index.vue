@@ -77,11 +77,11 @@
 			<ul>
 				<li>
 					<image src="../../static/img/消息中心.jpg" mode=""></image>
-					<span>消息中心</span>
+					<span>我的收藏</span>
 				</li>
 				<li>
 					<image src="../../static/img/我的喜欢.jpg" mode=""></image>
-					<span>我的收藏</span>
+					<span>我的喜欢</span>
 					
 				</li>
 				<li>

@@ -137,10 +137,23 @@
 				uni.chooseImage({
 					count: 1,
 					sourceType: ["album", "camera"],
-					success: async(res) => {
-						console.log(res)
-						let result=await TfileUpload({file: [res.tempFiles][0][0].path});
-						console.log(result)
+					success: (chooseImageRes) => {
+						const tempFilePaths = chooseImageRes.tempFilePaths;
+						uni.uploadFile({
+									url: 'http://47.115.220.70:8082/tfile/upload', //仅为示例，非真实的接口地址
+									filePath: tempFilePaths[0],
+									name: 'file',
+									formData: {
+										'user': 'test'
+									},
+									success: (uploadFileRes) => {
+										console.log(uploadFileRes.data);
+										this.changeinfo.photourl=uploadFileRes.data;
+										this.$store.dispatch("alterinfo",this.changeinfo)
+									}
+								});
+						// let result=await TfileUpload({file: [res.tempFiles][0][0].path});
+						// console.log(result)
 						// _this.changeinfo.avator =;
 					},
 				});
@@ -148,10 +161,10 @@
 			popupinfo(item){
 				this.$refs.popup.open('bottom');
 				this.selectedOption=item;
-				this.$refs.popup.close();
 			},
 			ChangeInfo(){
 				this.$store.dispatch("alterinfo",this.changeinfo)
+				this.$refs.popup.close();
 			},
 			ChangeSex(item){
 				this.$set(this.changeinfo, 'sex', item);

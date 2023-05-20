@@ -44,6 +44,7 @@ export const PayAdd=async(data)=>{
 		url:'/pay/add',
 		method:'PUT',
 		data,
+		headers:{token:getToken()},
 	})
 	UserGetUserMessage()
 	return result

@@ -64,6 +64,12 @@
 		}    
 	},
 	{
+		"path" : "pages/issue/myself",
+		"style" : {
+	
+		}    
+	},
+	{
 		"path" : "pages/like/index",
 		"style" : {
 
@@ -123,6 +129,15 @@
 		    }
 		    
 		}
+        ,{
+            "path" : "pages/money/deposit",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	
 	"globalStyle": {

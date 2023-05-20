@@ -22,7 +22,8 @@ const actions={
 		commit("SETTOKEN",token);
 	},
 	async alterinfo({commit},info){
-		let result=await UserUpdateUserMessage({info});
+		let User=info
+		let result=await UserUpdateUserMessage(User);
 		commit("ALTERIMFO",info);
 	}
 }

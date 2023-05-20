@@ -3,9 +3,9 @@
 		<view class="header">
 			<view class="search">
 				<view class="search-input">
-					<u-input v-model="sarchvalue" type="text" placeholder="搜索想要的资源" border="true"
+					<u-input v-model="searchvalue" type="text" placeholder="搜索想要的资源" border="true"
 						style="background-color: #fff;border-radius: 12px;" />
-					<view class="searchbtn">搜索</view>
+					<view class="searchbtn" @click="Tosearch(searchvalue)">搜索</view>
 
 				</view>
 			</view>
@@ -64,7 +64,7 @@
 		data() {
 			return {
 				title: 'Hello1',
-				sarchvalue: "",
+				searchvalue: "",
 				sortbtn: [{
 					type: 'default',
 					text: '默认排序'
@@ -80,6 +80,7 @@
 					current: 1,
 					size: 3,
 					type: 0,
+					order:0,
 				},
 				indexlist: [],
 			}
@@ -122,7 +123,9 @@
 					})
 				} else this.indexlist = [...this.indexlist, ...result.data.resourcesList];
 				console.log(result)
-
+			},
+			Tosearch(vaule){
+				console.log(vaule)
 			}
 		},
 		computed: {

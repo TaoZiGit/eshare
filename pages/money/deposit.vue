@@ -4,43 +4,7 @@
 			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routerback"></u-icon>
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">零钱余额</view>
 		</header>
-		<section class="coin">
-			
-			<view class="remaining">
-				<view style="font-size: 18px;font-weight: 700;display: flex;">
-					<view class="coin-icon  flex-center">
-							<u-icon name="rmb-circle" size="16"></u-icon>					
-					</view>
-					零钱余额
-				</view>
-				<view style="padding:23px 16px;font-size: 24px; font-weight: 700;display: flex;justify-content: space-between;width:inherit">
-					￥{{info.money!==undefined?info.money.toFixed(2):0.00}}
-				</view>
-			</view>
-			
-		</section>
-		<section class="recharge">
-			<view class="recharge-header">
-				提现
-			</view>
-			<ul>
-				<li class="flex-center" v-for="(item,index) in list.slice(6)" :key="index" :class="currentIndex==index?'active':''" @click="currentIndex=index">提现{{item}}元</li>
-			</ul>
-		</section>
-		<section class="recharge">
-			<view class="recharge-header">
-				充值
-			</view>
-			<ul>
-				<li class="flex-center" v-for="(item,index) in newList" :key="index" :class="currentIndex==index?'active':''" @click="currentIndex=index">充值{{item}}元</li>
-			</ul>
-		</section>
-		<view class="recharge-btn" @click="RechargeBtn()">
-			立即充值
-		</view>
-		<uni-popup ref="popup" type='center'>
-			<uni-popup-dialog type="dialog" cancelText="关闭" confirmText="充值"  :content="`确定充值${list[currentIndex]}元吗`" @confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
-		</uni-popup>
+		
 	</view>
 </template>
 
@@ -52,7 +16,7 @@
 	export default {
 		data() {
 			return {
-				list:[10,30,50,70,100,200,10,30,50,70,100,200],
+				list:[10,30,50,70,100,200],
 				currentIndex:0,
 			}
 		},
@@ -76,9 +40,6 @@
 			}
 		},
 		computed: {
-			newList() {
-			      return this.list.slice(0, this.list.length - 6);
-			},
 			...mapState({
 				token: (state) => state.user.token,
 				info: (state) => state.user.info,

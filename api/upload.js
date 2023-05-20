@@ -1,5 +1,5 @@
-const api=(Option)=>{
-	let baseURL='http://47.115.220.70:8888/system'
+const upload=(Option)=>{
+	let baseURL='http://47.115.220.70:8082'
 	let url=baseURL+Option.url;
 	if (Option.data) {
 	  url+='?'+Object.keys(Option.data).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(Option.data[key])).join('&')
@@ -12,7 +12,7 @@ const api=(Option)=>{
 			url,
 			method:Option.method||'GET',
 			header:Option.headers,
-			data:Option.params,
+			// data:Option.data,
 			success:res=>{
 				uni.hideLoading()
 				if(res.data.status==200)
@@ -36,4 +36,4 @@ const api=(Option)=>{
 	})
 	
 }
-export default api
+export default upload
