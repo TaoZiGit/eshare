@@ -1,10 +1,15 @@
 <script>
 	export default {
 		globalData: {
-			token:""
+			token: ""
 		},
 		onLaunch: function() {
 			console.log('App Launch')
+			uni.onTabBarMidButtonTap(() => {
+				uni.navigateTo({
+					url: '/pages/issue/index',
+				});
+			})
 		},
 		onShow: function() {
 			console.log('App Show')

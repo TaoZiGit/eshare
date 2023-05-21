@@ -1,5 +1,6 @@
 import {getToken} from '@/utils/Token.js'
 import {UserUpdateUserMessage} from "@/api/user.js"
+import {AlterIssueRegex} from "@/utils/regular.js"
 const state={ 
 	token:"",
 	info:{
@@ -12,7 +13,7 @@ const mutations={
 		state.token=token
 	},
 	ALTERIMFO(state,info){
-		state.info=info
+		state.info={ ...state.info, ...info };
 	}
 }
 const actions={
@@ -22,8 +23,14 @@ const actions={
 		commit("SETTOKEN",token);
 	},
 	async alterinfo({commit},info){
-		let User=info
-		let result=await UserUpdateUserMessage(User);
+		console.log(info)
+		let regexsult=AlterIssueRegex(info)
+		if(!regexsult.valid){
+			console.log(regexsult.message)
+		}
+		const {name,phone,address,sex,worknum,age,description,photourl}=info;
+		const newInfo = {name,phone,address,sex,worknum,age,description,photourl};
+		let result=await UserUpdateUserMessage(newInfo);
 		commit("ALTERIMFO",info);
 	}
 }

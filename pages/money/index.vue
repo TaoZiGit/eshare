@@ -24,7 +24,7 @@
 				提现
 			</view>
 			<ul>
-				<li class="flex-center" v-for="(item,index) in list.slice(6)" :key="index" :class="currentIndex==index?'active':''" @click="currentIndex=index">提现{{item}}元</li>
+				<li class="flex-center" v-for="(item,index) in list.slice(6)" :key="index" :class="currentIndex==index&&currenttpye==0?'active':''" @click="currentIndex=index;currenttpye=0">提现{{item}}元</li>
 			</ul>
 		</section>
 		<section class="recharge">
@@ -32,14 +32,15 @@
 				充值
 			</view>
 			<ul>
-				<li class="flex-center" v-for="(item,index) in newList" :key="index" :class="currentIndex==index?'active':''" @click="currentIndex=index">充值{{item}}元</li>
+				<li class="flex-center" v-for="(item,index) in newList" :key="index" :class="currentIndex==index&&currenttpye==1?'active':''" @click="currentIndex=index;currenttpye=1">充值{{item}}元</li>
 			</ul>
 		</section>
 		<view class="recharge-btn" @click="RechargeBtn()">
-			立即充值
+			立即{{currenttpye?'充值':'提现'}}
 		</view>
 		<uni-popup ref="popup" type='center'>
-			<uni-popup-dialog type="dialog" cancelText="关闭" confirmText="充值"  :content="`确定充值${list[currentIndex]}元吗`" @confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
+			<uni-popup-dialog type="dialog" cancelText="关闭" confirmText="充值"  :content="`确定${currenttpye?'充值':'提现'}${list[currentIndex]}元吗`" @confirm="dialogConfirm" @close="dialogClose" v-if="currenttpye==1"></uni-popup-dialog>
+			<uni-popup-dialog ref="inputClose"  mode="input" title="请输入密码" value="" placeholder="请输入密码" @confirm="dialogConfirm" v-else style="outline: none;"></uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
@@ -53,6 +54,7 @@
 		data() {
 			return {
 				list:[10,30,50,70,100,200,10,30,50,70,100,200],
+				currenttpye:0,
 				currentIndex:0,
 			}
 		},
@@ -60,8 +62,14 @@
 			RechargeBtn(){
 				this.$refs.popup.open('center');
 			},
-			async dialogConfirm(){
-				let result=await PayAdd({userid:this.info.id,money:this.list[this.currentIndex]})
+			async dialogConfirm(val){
+				if(this.currenttpye){
+					let result=await PayAdd({userid:this.info.id,money:this.list[this.currentIndex]})
+				}
+				else{
+					console.log(this.password,val)
+					let result=await PayGet({userid:this.info.id,money:this.list[this.currentIndex],password:val})
+				}
 			},
 			dialogClose(){
 				
@@ -71,9 +79,6 @@
 					delta: 1, 
 				});
 			},
-			deposit(){
-				
-			}
 		},
 		computed: {
 			newList() {
@@ -88,6 +93,9 @@
 </script>
 
 <style lang="scss" scoped>
+.uni-dialog-input{
+	outline: none !important;
+}
 header{
 	width: 375px;
 	height: 70px;

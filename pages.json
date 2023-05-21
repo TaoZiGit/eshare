@@ -138,6 +138,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/myself/userindex",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	
 	"globalStyle": {
@@ -170,7 +179,7 @@
 		"midButton":{
 			"text": "发布",
 			"height": "45px",
-			"pagePath": "pages/index/index",
+			"pagePath": "/pages/issue/index",
 			"iconPath": "static/add.png",
 			"selectedIconPath": "static/add-select.png"
 		}
