@@ -3,7 +3,6 @@
 		<header>
 			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routeback"></u-icon>
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">编辑资料</view>
-			<u-icon name="checkmark" size="20" style="margin-left: auto; margin-right: 10px;"></u-icon>
 		</header>
 		<section style="background-color: #fff;">
 			<span style="color: #a5a5a5;margin: 10px;font-weight: 700;font-size: 14px;">基本信息</span>
@@ -13,7 +12,7 @@
 						头像
 					</view>
 					<view class="right" @click="changeavator()">
-						<u-avatar :src="info.avator" size="35"></u-avatar>
+						<u-avatar :src="info.photourl" size="35"></u-avatar>
 						<u-icon name="arrow-right" size="10" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>
@@ -149,8 +148,8 @@
 							filePath: tempFilePaths[0],
 							name: 'file',
 							success: (uploadFileRes) => {
-								console.log(uploadFileRes.data);
-								this.changeinfo.photourl = uploadFileRes.data;
+								console.log(JSON.parse( uploadFileRes.data).data);
+								this.changeinfo.photourl =JSON.parse( uploadFileRes.data).data;
 								this.$store.dispatch("alterinfo", this.changeinfo)
 							}
 						});
@@ -165,12 +164,44 @@
 				this.selectedOption = item;
 			},
 			ChangeInfo() {
-				this.$store.dispatch("alterinfo", this.changeinfo)
+				this.$store.dispatch("alterinfo", this.changeinfo).then((res)=>{
+					console.log(res,"success")
+				})
+				.catch((res)=>{
+					uni.showToast({
+							icon:'error',
+							title:res.message
+						})
+				})
+				// if(!result.valid) {
+				// 	uni.showToast({
+				// 		icon:'error',
+				// 		title:result.message
+				// 	})
+				// 	this.changeinfo={}
+				// }
+				// else{
+				// 	uni.showToast({
+				// 		icon:'success',
+				// 		title:'修改成功'
+				// 	})
+				// 	this.getuserList()
+				// }
 				this.$refs.popup.close();
 			},
 			ChangeSex(item) {
+				
 				this.$set(this.changeinfo, 'sex', item);
-				this.$store.dispatch("alterinfo", this.changeinfo)
+				console.log(this.changeinfo)
+				this.$store.dispatch("alterinfo", this.changeinfo).then((res)=>{
+					console.log(res,"success")
+				})
+				.catch((res)=>{
+					uni.showToast({
+							icon:'error',
+							title:res.message
+						})
+				})
 				this.$refs.popup.close();
 			}
 		},

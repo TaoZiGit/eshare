@@ -30,7 +30,7 @@ const api=(Option)=>{
 						title:res.data.message,
 						icon:'error'
 					})
-					reject(res.data.message)
+					// reject(res.data.message)
 				}
 			},
 			fail:err=>{

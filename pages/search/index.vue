@@ -1,11 +1,14 @@
 <template>
 	<view class="">
+		<header>
+			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routeback"></u-icon>
+			<view style="position: absolute;left:50%;transform: translateX(-50%);">搜索</view>
+		</header>
 		<view class="header">
 			<view class="search">
 				<view class="search-input">
 					<u-input v-model="sarchvalue" type="text" placeholder="搜索想要的资源" border="true" style="background-color: #fff;border-radius: 12px;" />
-					<view class="searchbtn">搜索</view>
-			
+					<view class="searchbtn" @click="Tosearch()">搜索</view>
 				</view>
 			</view>
 		</view>
@@ -14,60 +17,76 @@
 				<li   :class="currentTab==index ? 'active' : ''" v-for="(item,index) in sortbtn" :key="index" @click="changesearch(index)">{{item.text}}</li>
 			</ul>
 		</view>
-			<view class="search-lists">
-				<view class="search-item">
-					<view class="img" style="margin:16px;">
-						<view class="star">
-							<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
-							<span style="line-height: 20px;padding-left: 2px;">12</span>
-						</view>
-					</view>
-					<view style="display: flex;flex-direction: column;margin:16px;">
-						 <view style="font-weight: 700;font-size: 16px;">
-						 	全新倍思wm02白色
-						 </view>
-						 <view style="font-size: 12px;width: 175px;">
-							<p class="introduce">送耳机套壳，心动不如行动，可以小刀，感兴趣的话点“我想要阿斯啊蒂芬</p>
-						 </view>
-						 <view style="margin-top: 12px;font-weight: 700;">
-						 	￥85.0
-						 </view>
-					</view>
-				</view>
-				
-				<view class="search-item">
-					<view class="img">
-						
-					</view>
-					1
-				</view>
-			</view>
+		<Lists :list="searchlist" />
 	</view>
 	
 </template>
 
 <script>
+	import {ResourceSearch} from '@/api/resource.js'
+	import Lists from '@/components/rescourelist.vue'
 	export default {
+		components: {
+			Lists
+		},
 		data() {
 			return {
 				title: 'Hello1',
 				sarchvalue:"",
 				sortbtn:[{type:'default',text:'默认排序'},{type:'default',text:'按点赞排序'},{type:'default',text:'按收藏数排序'}],
-				currentTab:0
+				currentTab:0,
+				searchinfo:{
+					current:1,
+					size:10,
+					type:0,
+					order:0,
+					search:"",
+				},
+				searchlist:[],
 			}
 		},
-		onLoad() {
-
+		onLoad(option) {
+			this.searchinfo={...this.searchinfo,...option}
+			this.getlist();
 		},
 		methods: {
+			routeback() {
+				uni.navigateBack({
+					delta: 1,
+				});
+			},
+			Tosearch(){
+				this.searchinfo.search=this.sarchvalue;
+				this.searchinfo.current = 1;
+				this.searchlist = [],
+				this.getlist();
+			},
 			changesearch(index){
-				this.currentTab=index
+				this.currentTab=index;
+				this.searchinfo.type=index;
+				this.searchinfo.current = 1;
+				this.searchlist = [],
+				this.getlist();
+			},
+			async getlist(){
+				let result=await ResourceSearch(this.searchinfo)
+				this.searchlist=[...this.searchlist,...result.data.resourcesList]
 			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	header {
+		width: 375px;
+		height: 70px;
+		display: flex;
+		align-items: flex-end;
+		font-weight: 700;
+		position: relative;
+		background-color: #ffffff;
+		padding-bottom: 5px;
+	}
 	.header{
 		width: 375px;
 		display:flex;
@@ -76,7 +95,7 @@
 		.search{
 			width: 340px;
 			height: 42px;
-			margin:44px 25px 5px 26px;
+			margin:10px 25px 0 26px;
 		
 			position: relative;
 			.searchbtn{

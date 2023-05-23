@@ -18,7 +18,14 @@ export const Login=async(data)=>{
 	})
 	return result
 }
-
+export const UserLoginByPassword=async(data)=>{
+	let result =await api({
+		url:'/user/loginByPassword',
+		method:'POST',
+		data,
+	})
+	return result
+}
 export const UserGetUserMessage=async()=>{
 	let result =await api({
 		url:'/user/getUserMessage',
@@ -43,6 +50,17 @@ export const PayAdd=async(data)=>{
 	let result =await api({
 		url:'/pay/add',
 		method:'PUT',
+		data,
+		headers:{token:getToken()},
+	})
+	UserGetUserMessage()
+	return result
+}
+export const PayGet=async(data)=>{
+	
+	let result =await api({
+		url:'/pay/get',
+		method:'POST',
 		data,
 		headers:{token:getToken()},
 	})

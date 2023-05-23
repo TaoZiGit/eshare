@@ -41,24 +41,28 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "ad" : {}
+            }
         }
     },
-	 "h5": {
-	        "devServer": {
-	            "proxy": {
-	                "/api": {
-	                    "target": "http://47.115.220.70:8888/system",
-						"changeOrigin": true,  
-	                    "pathRewrite": {
-	                        "^/api": ""
-	                    }
-	                }
-	            }
-	        }
-	    },
+    "h5" : {
+        "devServer" : {
+            "proxy" : {
+                "/api" : {
+                    "target" : "http://47.115.220.70:8888/system",
+                    "changeOrigin" : true,
+                    "pathRewrite" : {
+                        "^/api" : ""
+                    }
+                }
+            }
+        }
+    },
     /* 快应用特有相关 */
     "quickapp" : {},
     /* 小程序特有相关 */

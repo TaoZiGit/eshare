@@ -4,41 +4,24 @@
 			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routeback"></u-icon>
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">收藏</view>
 		</header>
-		
-		<view class="search-lists"  >
-					<view class="search-item" @click="Todeatil(item.id)" v-for="item in list" :key="item.id">
-						<view class="img" style="margin:16px;" :style="{ backgroundImage: 'url(' + item.photourl + ')' }">
-							<view class="star">
-								<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
-								<span style="line-height: 20px;padding-left: 2px;">{{item.goodsnum}}</span>
-							</view>
-						</view>
-						<view style="display: flex;flex-direction: column;margin:16px;">
-							 <view style="font-weight: 700;font-size: 16px;">
-							 	{{item.title}}
-							 </view>
-							 <view style="font-size: 12px;width: 175px;">
-								<p class="introduce">{{item.content}}</p>
-							 </view>
-							 <view style="margin-top: 12px;font-weight: 700;">
-							 	￥{{  item.price.toFixed(2)}}
-							 </view>
-						</view>
-					</view>
-			</view>
-	</view>
+		<Lists :list="list" />
+		</view>
 </template>
 
 <script>
 	import {mapState} from "vuex";
 	import {ResourceCollections} from "@/api/resource.js"
+	import Lists from '@/components/rescourelist.vue'
 	export default {
+		components: {
+			Lists
+		},
 		data() {
 			return {
 				list:[],
 				listinfo:{
 					current:1,
-					size:12,
+					size:10,
 					userid:"",
 				}
 			}
@@ -47,7 +30,7 @@
 			async getlist(){
 				this.listinfo.userid=this.info.id
 				let result=await ResourceCollections(this.listinfo)
-				this.list=result.collectionsDataList;
+				this.list=result.data.collectionsDataList;
 			},
 			Todeatil(id){
 				console.log(id)

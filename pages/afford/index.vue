@@ -3,22 +3,33 @@
 		<view class="routeback" @click="routeback">
 			<u-icon name="arrow-left" size="16" color="#fff"></u-icon>
 		</view>
-		<uni-swiper-dot style=" height: 275px" :info="imginfo" :current="current" field="0" @clickItem=clickItem  mode="round">
-			<swiper class="swiper-box" style="height: 275px"  @change="change" :current="swiperDotIndex">
-				<swiper-item v-for="(item ,index) in imginfo" :key="index"  @click="previewImage(imginfo,index)">
+		<uni-swiper-dot style=" height: 275px" :info="detailinfo.photourl" :current="current" field="0" @clickItem=clickItem
+			mode="round">
+			<swiper class="swiper-box" style="height: 275px" @change="change" :current="swiperDotIndex">
+				<swiper-item v-for="(item ,index) in detailinfo.photourl" :key="index"
+					@click="previewImage(detailinfo.photourl,index)">
 					<view class="swiper-item">
-						<image :src="item.url"  mode="scaleToFill" lazy-load style="width: 375px;height: 275px;"></image>
+						<image :src="item" mode="scaleToFill" lazy-load style="width: 375px;height: 275px;">
+						</image>
 					</view>
 				</swiper-item>
 			</swiper>
 		</uni-swiper-dot>
 		<view class="buylist">
-			<image src="https://img.js.design/assets/img/62e4f02866bc4d7b9bbffc79.jpg" mode="scaleToFill" ></image>
+			<image :src="detailinfo.photourl[0]" mode="scaleToFill" ></image>
 			<view style="margin-left: 10px;">
-				<view style="width: 200px;font-size: 14px; word-wrap: break-word;word-break: break-all;text-align: justify;">全新未拆封倍思wm0asdfafasdffsadf2白色</view>
+				<view style="width: 200px;font-size: 14px; word-wrap: break-word;word-break: break-all;text-align: justify;">{{detailinfo.title}}</view>
 				<view class="price">
-					￥85.00
+					￥{{detailinfo.price}}
 				</view>
+			</view>
+		</view>
+		<view class="address">
+			<view class="">
+				数量
+			</view>
+			<view class="right" >
+			<u-number-box v-model="num":max="detailinfo.num" bgColor="#eeeeee" @change="valChange"></u-number-box>
 			</view>
 		</view>
 		<view class="address">
@@ -27,14 +38,11 @@
 			</view>
 			<view style="display: flex; justify-content: flex-end;flex-direction: column;align-items: flex-end;" >
 				<view style="font-weight: 700;">
-					罗增  17707830245
+					{{detailinfo.username}}  17707830245
 				</view>
 				<view style="width: 230px; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;color:rgba(128, 128, 128, 1);font-size: 12px;margin-top: 5px;">
-					桂林电子科技大学花江校区女生宿舍C区18栋
+					{{detailinfo.location}}
 				</view>
-			</view>
-			<view class="">
-				<u-icon name="arrow-right" color="rgba(128, 128, 128, 0.5)"></u-icon>
 			</view>
 		</view>
 		<view class="botton">
@@ -49,17 +57,21 @@
 </template>
 
 <script>
+	import {
+		getDeatil,
+		ResourceGood,
+		ResourceCollect
+	} from '@/api/resource.js'
+	import {
+		mapState
+	} from "vuex";
 	export default {
 		data() {
 			return {
-				imginfo:[
-					{	
-						url:'https://img.js.design/assets/img/62e4f02866bc4d7b9bbffc79.jpg',
-					},
-					{
-						url:'https://img.js.design/assets/img/62e4f02866bc4d7b9bbffc79.jpg',
-					},
-				],
+				detailinfo:{
+					
+				},
+				num:0,
 				current: 0,
 				swiperDotIndex: 0
 			};
@@ -72,12 +84,30 @@
 			clickItem(e) {
 				this.swiperDotIndex = e
 			},
+			valChange(){
+				
+			},
 			previewImage(imgs) {
 				console.log(imgs)
-			  uni.previewImage({ 
-			    urls:imgs.map(({url})=>url),
+			  uni.previewImage({
+			  	urls: imgs,
 			  });
 			},
+			async getdeatil(){
+				let result=await getDeatil({rid: this.detailinfo.rid,userid: this.userinfo.id})
+				this.detailinfo=result.data
+				this.detailinfo.photourl = this.detailinfo.photourl.split(",")
+			}
+		},
+		onLoad(option) {
+			this.detailinfo.rid = option.id || 'be8a5570-5e61-422d-8bb3-7b0f410c1857'
+			this.getdeatil();
+		},
+		computed: {
+			...mapState({
+				token: (state) => state.user.token,
+				userinfo: (state) => state.user.info,
+			}),
 		},
 		
 	}

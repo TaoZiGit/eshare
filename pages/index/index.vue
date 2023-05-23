@@ -5,7 +5,7 @@
 				<view class="search-input">
 					<u-input v-model="searchvalue" type="text" placeholder="搜索想要的资源" border="true"
 						style="background-color: #fff;border-radius: 12px;" />
-					<view class="searchbtn" @click="Tosearch(searchvalue)">搜索</view>
+					<view class="searchbtn" @click="Tosearch({order:2,type:0,search:searchvalue})">搜索</view>
 
 				</view>
 			</view>
@@ -13,14 +13,14 @@
 				<view class="lists">
 					<ul>
 						<li style="margin-right: 20px;">
-							<view class="flex-center" style="flex-direction: column;">
+							<view class="flex-center" style="flex-direction: column;" @click="Tosearch({order:1,type:0,search:''})">
 								<h3 style="font-size:20px font-weight:700">非电子类资源</h3>
 								<image src="../../static/img/unelectronic.jpg" mode="scaleToFill"
 									style="width: 75px;height: 63px;"></image>
 							</view>
 						</li>
 						<li>
-							<view class="flex-center" style="flex-direction: column;">
+							<view class="flex-center" style="flex-direction: column;"  @click="Tosearch({order:0,type:0,search:''})">
 								<h3 style="font-size:20px font-weight:700">电子类资源</h3>
 								<image src="../../static/img/electronic.jpg" mode="scaleToFill"
 									style="width: 66px;height: 63px;"></image>
@@ -49,7 +49,7 @@
 	} from "@/utils/Token.js"
 	import Lists from '@/components/rescourelist.vue'
 	import {
-		getindex
+		getindex,ResourceSearch
 	} from '@/api/resource.js'
 	import {
 		UserGetUserMessage
@@ -124,8 +124,11 @@
 				} else this.indexlist = [...this.indexlist, ...result.data.resourcesList];
 				console.log(result)
 			},
-			Tosearch(vaule){
-				console.log(vaule)
+			Tosearch(info){
+				uni.navigateTo({
+					url: `/pages/search/index?type=${info.type}&order=${info.order}&search=${info.search}`, // 路由的页面路径
+				});
+				
 			}
 		},
 		computed: {

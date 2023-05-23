@@ -1,7 +1,7 @@
 <template>
 	<view class="search-lists">	
 				<view class="search-item" @click="Todeatil(item.id)" v-for="item in list" :key="item.id">
-					<view class="img" style="margin:16px;" :style="{ backgroundImage: 'url(' + item.photourl + ')' }">
+					<view class="img" style="margin:16px;" :style="{ backgroundImage: 'url(' + photo(item.photourl)+ ')' }">
 						<view class="star">
 							<u-icon name="star-fill" color="#fab005" size="14"></u-icon>
 							<span style="line-height: 20px;padding-left: 2px;">{{item.goodsnum}}</span>
@@ -14,8 +14,12 @@
 						 <view style="font-size: 12px;width: 175px;">
 							<p class="introduce">{{item.content}}</p>
 						 </view>
-						 <view style="margin-top: 12px;font-weight: 700;">
-						 	￥{{  item.price.toFixed(2)}}
+						 <view style="margin-top: 12px;font-weight: 700;font-size: 14px;display: flex;justify-content: space-between; ">
+						 	￥{{!item.price ||item.price.toFixed(2)}}
+							<view  @click.stop="Toissue(item)">
+								<u-button size="mini" style="width: 50px;font-size: 12px;background-color: #ffc300; color: #fff;border: 0 !important;" v-if="type=='issue'">编辑</u-button>
+							</view>
+							
 						 </view>
 					</view>
 				</view>
@@ -33,19 +37,28 @@
 			list:{
 				type: Array,
 				default: ()=>[]
+			},
+			type:{
+				type:String,
+				default:"",
 			}
 		},
 		methods: {
 			Todeatil(id){
-				console.log(id)
 				uni.navigateTo({
 				url:'/pages/detail/index?id='+id,
-				  success: function () {
-				    console.log('路由到其他页面成功');
-				  }
+				});
+			},
+			photo(str){
+				return str.split(",")[0]
+			},
+			Toissue:(item)=>{
+				console.log(item)
+				uni.navigateTo({
+				url:'/pages/issue/index?id='+item.id,
 				});
 			}
-		}
+		},
 	}
 </script>
 

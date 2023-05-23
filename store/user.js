@@ -4,7 +4,8 @@ import {AlterIssueRegex} from "@/utils/regular.js"
 const state={ 
 	token:"",
 	info:{
-		id:'1a0926236fd9440d589a7f21372911b6'
+		id:'1a0926236fd9440d589a7f21372911b6',
+		address:'桂林电子科技大学'
 	},
 };
 
@@ -22,15 +23,27 @@ const actions={
 		console.log(token)
 		commit("SETTOKEN",token);
 	},
-	async alterinfo({commit},info){
-		console.log(info)
+	async alterinfo({state,commit},info){
 		let regexsult=AlterIssueRegex(info)
-		if(!regexsult.valid){
-			console.log(regexsult.message)
+		console.log(regexsult)
+		if(regexsult!==undefined && !regexsult.valid){
+			return new Promise((resolve,reject)=>{
+				reject(regexsult)
+			}) 
 		}
-		const {name,phone,address,sex,worknum,age,description,photourl}=info;
-		const newInfo = {name,phone,address,sex,worknum,age,description,photourl};
+		let newInfo = {
+		  ...state.info,
+		  ...info
+		};
+		const {name,phone,address,sex,worknum,age,description,photourl}=newInfo;
+		newInfo = {name,phone,address,sex,worknum,age,description,photourl};
 		let result=await UserUpdateUserMessage(newInfo);
+		if(result.status==200){
+			uni.showToast({
+					icon:'success',
+					title:'修改成功'
+				})
+		}
 		commit("ALTERIMFO",info);
 	}
 }

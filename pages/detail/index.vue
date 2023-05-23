@@ -4,14 +4,18 @@
 			<u-icon name="arrow-left" size="16" color="#fff"></u-icon>
 		</view>
 		<view class="like">
-			<u-icon :name="islike?'heart-fill':'heart'" size="33" :color="islike?'#ff5454':'#fff'"></u-icon>
+			<u-icon :name="islike?'heart-fill':'heart'" size="33" :color="info.islike?'#ff5454':'#fff'"
+				@click="changelike()">
+			</u-icon>
 		</view>
-		<uni-swiper-dot style=" height: 275px" :info="imginfo" :current="current" field="0" @clickItem=clickItem
+		<uni-swiper-dot style=" height: 275px" :info="info.photourl" :current="current" field="0" @clickItem=clickItem
 			mode="round">
 			<swiper class="swiper-box" style="height: 275px" @change="change" :current="swiperDotIndex">
-				<swiper-item v-for="(item ,index) in imginfo" :key="index" @click="previewImage(imginfo,index)">
+				<swiper-item v-for="(item ,index) in info.photourl" :key="index"
+					@click="previewImage(info.photourl,index)">
 					<view class="swiper-item">
-						<image :src="item.url" mode="scaleToFill" lazy-load style="width: 375px;height: 275px;"></image>
+						<image :src="item" mode="scaleToFill" lazy-load style="width: 375px;height: 275px;">
+						</image>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -23,21 +27,23 @@
 			<view style="font-weight: 700;font-size: 16px;margin:5px 16px 12px;">
 				{{info.title}}
 			</view>
-			<div class="collect">
-				<u-icon name="star-fill" size="38" :color="islike?'#fab005':'#e5e5e5'"
-					style=" position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%); "></u-icon>
+			<div class="collect" @click="changecollect()">
+				<u-icon name="star-fill" size="38" :color="info.iscollect?'#fab005':'#e5e5e5'"
+					style=" position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%); ">
+				</u-icon>
 			</div>
 			<view class="publisher">
-				<u-avatar style="margin-left: 16px;"
-					src="https://img.js.design/assets/smartFill/img307164da746310.jpeg"></u-avatar>
+				<u-avatar style="margin-left: 16px;" :src="info.userurl">
+				</u-avatar>
 				<view class="name">
-					<h2 style="font-size: 14px;color: rgba(0, 0, 0, 0.78);">南瓜星打球的丹参</h2>
+					<h2 style="font-size: 14px;color: rgba(0, 0, 0, 0.78);">{{info.username}}
+					</h2>
 					<view class="publishaddress">
 						发布于{{info.location}}
 					</view>
 				</view>
-				<view class="focus">
-					<u-icon name="plus" size="13" color="rgba(0, 0, 0, 1)"></u-icon>
+				<view class="focus" @click="changefoucs()">
+					<u-icon name="plus" size="13" :color="info.isfoucs?'#fab005':'rgba(0, 0, 0, 1)'"></u-icon>
 					<span>&nbsp;关注</span>
 				</view>
 			</view>
@@ -50,9 +56,7 @@
 				</view>
 				<view
 					style="padding:10px 12px;font-size: 12px;line-height: 20px;font-weight: 400;color:rgba(31, 51, 73, 0.6);">
-					<p style="  word-wrap: break-word;
-        word-break: break-all;
-        text-align: justify;">{{info.content}}</p>
+					<p style="  word-wrap: break-word;word-break: break-all;text-align: justify;">{{info.content}}</p>
 				</view>
 			</view>
 			<view class="content">
@@ -60,27 +64,29 @@
 					<view class="circle">
 						<u-icon name="more-dot-fill" size="17" color="rgba(0, 0, 0, 0.86)"></u-icon>
 					</view>
-					<div class="title">评论区</div>
+					<view class="title">评论区</view>
 				</view>
 				<view class="first">
-					<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg" size="30"
-						style="margin-left: 10px;"></u-avatar>
+					<u-avatar :src="userinfo.photourl" size="30" style="margin-left: 10px;"></u-avatar>
 					<view
 						style="background-color: #f5f5f5;border-radius: 20px;padding-left: 10px;margin-left: 10px;display: flex;align-items: center;width: 300px;color: #ccc;"
-						@click="Commentfirst()">看对眼就留言,问问更多细节~</view>
+						@click="Commentfirst()">看对眼就留言,问问更多细节~
+					</view>
 				</view>
-				<view class="" v-if="!commentlist||commentlist.length==0">
+				<view v-if="!commentlist||commentlist.length==0">
 					<u-empty text="暂无评论,快来评论吧~" mode="list"></u-empty>
 				</view>
 				<view style="margin-top: 15px;" v-for="item of commentlist" :key="item.mainComent.id" v-else>
 					<view class="commentlist">
-						<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg" size="30"
-							style="margin-left: 10px;"></u-avatar>
+						<u-avatar :src="item.mainComent.photourl" size="30" style="margin-left: 10px;">
+						</u-avatar>
 						<view style="display: flex;flex-direction: column;margin-left: 10px;">
 							<view>
-								<span class="commentname" style="font-weight: 700;">可乐</span>
+								<span class="commentname" style="font-weight: 700;">{{item.mainComent.username}}
+								</span>
 								<span class="createtime"
-									style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">{{formattedTime(item.mainComent.createtime)}}</span>
+									style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">{{formattedTime(item.mainComent.createtime)}}
+								</span>
 							</view>
 							<view style="display: flex;justify-content: flex-start;">
 								<view
@@ -90,47 +96,47 @@
 								<view style="display: flex;">
 									<view
 										style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
-										<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20"></u-icon>
+										<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20" @click="changelikecomment(item.mainComent)">
+										</u-icon>
 										{{item.mainComent.goodsnum}}
 									</view>
 									<view style="margin-left: 5px;">
 										<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20"
-											@click="Commentfirst()"></u-icon>
+											@click="CommentSecond(item.mainComent.id,item.mainComent.userid,item.mainComent.id,item.mainComent.username)"></u-icon>
 									</view>
 								</view>
 							</view>
-							<view class="commentlist" v-for="item of commentlist.childrenComment" :key="item.id"
+							<view class="commentlist" v-for="sceond of item.childrenComment" :key="sceond.id"
 								style="margin-top: 4px;justify-content: space-between;">
-								<u-avatar src="https://img.js.design/assets/smartFill/img322164da746310.jpg"
-									size="30"></u-avatar>
+								<u-avatar :src="sceond.photourl" size="30"></u-avatar>
 								<view style="display: flex;flex-direction: column;margin-left: 5px;">
 									<view>
-										<span class="commentname" style="font-weight: 700;font-size:15px">可乐</span>
+										<span class="commentname"
+											style="font-weight: 700;font-size:15px">{{sceond.username}}</span>
 										<span class="createtime"
-											style="padding-left: 5px;font-size: 12px;color: rgba(128, 128, 128, 0.4);">两天前</span>
-									</view>
-									<view style="display: flex;justify-content: flex-start;">
-										<view
-											style="font-size: 13px;padding: 3px 0;width: 185px; word-wrap: break-word;word-break: break-all;text-align: justify;">
-											同学，那个倍思耳机的音质怎么样呀
-										</view>
-										<view style="display: flex;">
+											style="padding-left: 5px;font-size: 12px;color: rgba(128, 128, 128, 0.4);">{{sceond.updatetime.split(" ")[0]}}</span>
+										<view style="display: flex;align-items: flex-start;">
 											<view
-												style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
-												<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20"></u-icon>
-												18
+												style="font-size: 13px;padding: 3px 0;width: 185px; word-wrap: break-word;word-break: break-all;text-align: justify;">
+												{{sceond.content}}
 											</view>
-											<view style="margin-left: 5px;">
-												<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20"
-													@click="CommentSceond()"></u-icon>
+											<view style="display: flex;">
+												<view
+													style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
+													<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)"
+														size="20"></u-icon>
+													{{sceond.goodsnum}}
+												</view>
+												<view style="margin-left: 5px;">
+													<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20"
+														@click="CommentSceond()"></u-icon>
+												</view>
 											</view>
 										</view>
 									</view>
 								</view>
 							</view>
-
 						</view>
-
 					</view>
 				</view>
 			</view>
@@ -145,10 +151,8 @@
 		</uni-popup>
 		<view class="botton">
 			<view class="seller">
-				<u-icon name="kefu-ermai" color="rgba(0, 0, 0, 0.7)" size="24"></u-icon>
-				联系他~
 			</view>
-			<view class="buybtn flex-center">立即购买</view>
+			<view class="buybtn flex-center" @click="buy()">立即购买</view>
 		</view>
 	</view>
 
@@ -156,11 +160,14 @@
 
 <script>
 	import {
-		getDeatil
+		getDeatil,
+		ResourceGood,
+		ResourceCollect
 	} from '@/api/resource.js'
 	import {
 		CommentAll,
-		CommentAdd
+		CommentAdd,
+		CommentAppend
 	} from '@/api/comment.js'
 	import {
 		UserGetUserMessage
@@ -176,13 +183,6 @@
 				islike: true,
 				iscollect: true,
 				commenttext: "",
-				imginfo: [{
-						url: 'https://img.js.design/assets/img/62e4f02866bc4d7b9bbffc79.jpg',
-					},
-					{
-						url: 'https://img.js.design/assets/img/62e4f02866bc4d7b9bbffc79.jpg',
-					},
-				],
 				current: 0,
 				swiperDotIndex: 0,
 				info: {},
@@ -190,7 +190,10 @@
 					current: 1,
 					size: 5,
 					rid: null,
-					commenttype:'first',
+					commenttype: 'first',
+					firstid: "",
+					userid: "",
+					commentid: "",
 				},
 				commentlist: [],
 			};
@@ -198,16 +201,27 @@
 		methods: {
 			change(e) {
 				this.current = e.detail.current
-				console.log(this.current)
-
 			},
 			Commentfirst() {
-				this.commentinfo.commenttype='first';
+				if (this.commentinfo.commenttype == 'second')
+					this.commenttext = '';
+				this.commentinfo.commenttype = 'first';
 				this.$refs.popup.open('bottom');
-
 			},
-			CommentSecond(){
-				this.commentinfo.commenttype='second';
+			CommentSecond(firstid, userid, commentid, secondname) {
+				const newinfo = {
+					firstid,
+					userid,
+					commentid,
+					secondname
+				}
+				this.commentinfo = {
+					...this.commentinfo,
+					...newinfo
+				}
+				console.log(this.commentinfo)
+				this.commentinfo.commenttype = 'second';
+				this.commenttext = '回复@' + secondname + ":"
 				this.$refs.popup.open('bottom');
 			},
 			clickItem(e) {
@@ -216,23 +230,35 @@
 			formattedTime(timestamp) {
 				return timeFrom(timestamp)
 			},
-			async commentadd(){
-				if(this.commenttext.trim()){
-					if(!this.userinfo.id){
-						let result=await UserGetUserMessage()
+			async commentadd() {
+				if (this.commenttext.trim()) {
+					if (!this.userinfo.id) {
+						let result = await UserGetUserMessage()
 					}
-					let result=await CommentAdd({rid:this.commentinfo.rid,userid:this.userinfo.id,content:this.commenttext})
-						this.commenttext="";
-						uni.showToast({
-							title: '评论成功',
-							icon: 'success'
+					if (this.commentinfo.commenttype == 'first') {
+						let result = await CommentAdd({
+							rid: this.commentinfo.rid,
+							userid: this.userinfo.id,
+							content: this.commenttext
 						})
-						
-						this.$refs.popup.close();
-						this.getcomment()
-						// this.commentlist = comments.data.dataList;
-				}
-				else{
+					} else {
+						this.commenttext = this.commenttext.split(":")[1]
+						let result = await CommentAppend({
+							mainid: this.commentinfo.firstid,
+							userid: this.commentinfo.userid,
+							myid: this.userinfo.id,
+							content: this.commenttext,
+							commentid: this.commentinfo.commentid
+						})
+					}
+					this.commenttext = "";
+					uni.showToast({
+						title: '评论成功',
+						icon: 'success'
+					})
+					this.$refs.popup.close();
+					this.getcomment()
+				} else {
 					uni.showToast({
 						title: '请输入内容',
 						icon: 'error'
@@ -250,27 +276,27 @@
 			previewImage(imgs) {
 				console.log(imgs)
 				uni.previewImage({
-					urls: imgs.map(({
-						url
-					}) => url),
+					urls: imgs,
 				});
 			},
 			async getcomment() {
 				let comments = await CommentAll(this.commentinfo);
-				this.commentlist=comments.data.dataList
+				this.commentlist = comments.data.dataList
 			},
-			async getdeatil(id) {
+			async getdeatil() {
 				const {
 					info,
 					comments
-				} = await this.getDetailAndComments('d9e29e11-3972-4e36-ac82-f6de99806752');
+				} = await this.getDetailAndComments();
 				this.info = info;
 				this.commentlist = comments.data.dataList;
+				this.info.photourl = this.info.photourl.split(",")
 			},
-			async getDetailAndComments(id) {
+			async getDetailAndComments() {
 				const [info, comments] = await Promise.all([
 					getDeatil({
-						rid: id
+						rid: this.commentinfo.rid,
+						userid: this.userinfo.id,
 					}).then(result => result.data),
 					CommentAll(this.commentinfo)
 				]);
@@ -278,11 +304,44 @@
 					info,
 					comments
 				};
+			},
+			async changelike() {
+				const[result1,result2]= await Promise.all([ResourceGood({rid: this.commentinfo.rid,userid: this.userinfo.id,}),getDeatil({rid: this.commentinfo.rid,userid: this.userinfo.id,}).then(result => result.data)]) 
+				if(result1.status==200){
+					this.info.islike=!this.info.islike
+				}
+			},
+			async changecollect() {
+				const[result1,result2]= await Promise.all([ResourceCollect({rid: this.commentinfo.rid,userid: this.userinfo.id}),getDeatil({rid: this.commentinfo.rid,userid: this.userinfo.id}).then(result => result.data)]) 
+				if(result1.status==200){
+					this.info.iscollect=!this.info.iscollect
+				}
+			},
+			async changelikecomment(item) {
+				let result=await CommentGood({commentid:item.id,userid: this.userinfo.id})
+				if(result1.status==200){
+					item.goodsnum
+				}
+			},
+			async changefoucs() {
+				console.log(this.info.isfoucs)
+				/* await ResourceCollect({
+					rid: this.commentinfo.rid,
+					userid: this.userinfo.id,
+				}) */
+			},
+			buy(){
+				uni.navigateTo({
+					url: `/pages/afford/index?id=${this.commentinfo.rid}`, // 路由的页面路径
+					success: function() {
+						console.log('路由到其他页面成功');
+					}
+				});
 			}
 		},
 		onLoad(option) {
-			this.commentinfo.rid = option.id || 'd9e29e11-3972-4e36-ac82-f6de99806752'
-			this.getdeatil(1);
+			this.commentinfo.rid = option.id || 'be8a5570-5e61-422d-8bb3-7b0f410c1857'
+			this.getdeatil();
 			document.body.style.backgroundColor = '#fff';
 		},
 		computed: {
@@ -322,7 +381,7 @@
 		background-color: #fff;
 		border-radius: 16px 16px 0px 0px;
 		position: relative;
-
+		padding-bottom: 50px;
 		.price {
 			padding: 20px 16px 0;
 			font-size: 20px;

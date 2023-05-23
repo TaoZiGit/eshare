@@ -49,7 +49,7 @@
 	import {
 		mapState
 	} from "vuex";
-	import {PayAdd,UserGetUserMessage} from '@/api/user.js'
+	import {PayAdd,UserGetUserMessage,PayGet} from '@/api/user.js'
 	export default {
 		data() {
 			return {
@@ -63,12 +63,19 @@
 				this.$refs.popup.open('center');
 			},
 			async dialogConfirm(val){
+				let result;
 				if(this.currenttpye){
-					let result=await PayAdd({userid:this.info.id,money:this.list[this.currentIndex]})
+					result=await PayAdd({userid:this.info.id,money:this.list[this.currentIndex]})
+					
 				}
 				else{
-					console.log(this.password,val)
-					let result=await PayGet({userid:this.info.id,money:this.list[this.currentIndex],password:val})
+					result=await PayGet({userid:this.info.id,money:this.list[this.currentIndex],password:val})
+				}
+				if(result.status==200){
+					uni.showToast({
+						icon:'success',
+						title:result.data
+					})
 				}
 			},
 			dialogClose(){

@@ -41,18 +41,6 @@ const emailvalidate = (email) => {
 	result.valid = true;
 	return result;
 }
-const sexvalidate=(sex)=>{
-	const result = {
-		valid: false,
-		message: ''
-	};
-	if(sex!=='男'||sex!=='女'){
-		result.message = '只能填入男和女';
-		return result;
-	}
-	result.valid = true;
-	return result;
-}
 const addressvalidate=(address)=>{
 	const result = {
 		valid: false,
@@ -120,7 +108,6 @@ const validate = {
 	name:namevalidate,
 	phone: Phonevalidate,
 	email: emailvalidate,
-	sex: sexvalidate,
 	address: addressvalidate,
 	worknum: worknumvalidate,
 	age: agevalidate,

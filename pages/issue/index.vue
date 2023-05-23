@@ -45,6 +45,14 @@
 						<u-icon name="arrow-right" size="10" style="margin-left: 5px;"></u-icon>
 					</view>
 				</view>
+				<view class="num">
+					<view class="left">
+						数量
+					</view>
+					<view class="right" >
+					<u-number-box v-model="issueinfo.num" bgColor="#eeeeee" @change="valChange"></u-number-box>
+					</view>
+				</view>
 				<view class="address" v-if="issueinfo.type==0">
 					<view class="left">
 						交易地址
@@ -97,7 +105,10 @@
 		reqextname
 	} from '@/utils/regular.js'
 	import {
-		TfileUpload
+		TfileUpload,
+		ResourceAdd,
+		ResourceInfo,
+		ResourceUpdate
 	} from '@/api/resource.js'
 	import {
 		UserGetUserMessage
@@ -228,24 +239,47 @@
 					},
 				});
 			},
-			uploadImage(list) {
-				console.log(list)
-				for (let item of list) {
-					uni.uploadFile({
-						url: 'http://47.115.220.70:8082/tfile/upload', 
-						filePath:item.path,
-						name: 'file',
-						success: (uploadFileRes) => {
-							console.log(JSON.parse(uploadFileRes.data));
-			this.issueinfo.photourl.push(JSON.parse(uploadFileRes.data).data)				
-						
-						}
-					});
+			async uploadImage(list) {
+			  let uploadlist=[]
+			  let promises = []
+			  for (let item of list) {
+				  console.log(item.path.slice(0,4))
+				if(item.path.slice(0,4)=='http'){
+					uploadlist.push(item);
+					continue
 				}
+			    const promise = new Promise((resolve, reject) => {
+			      uni.uploadFile({
+			        url: 'http://47.115.220.70:8082/tfile/upload',
+			        filePath: item.path,
+			        name: 'file',
+			        success: (uploadFileRes) => {
+			          resolve(JSON.parse(uploadFileRes.data).data)
+			        },
+			        fail: (error) => {
+			          reject(error)
+			        }
+			      })
+			    })
+			    promises.push(promise)
+			  }
+				uploadlist=[...uploadlist,...await Promise.all(promises)] 
+				console.log(uploadlist)
+				return uploadlist
 			},
 			async issue() {
-				await this.uploadImage(this.uploadPicsList)
-				console.log(this.issueinfo)
+
+			  const urls = await this.uploadImage(this.uploadPicsList)
+			  this.issueinfo.photourl = urls
+			  let result;
+			  if(this.issueinfo.id){
+			  	result = await ResourceUpdate(this.issueinfo)
+			  }
+			  else{
+				result = await ResourceAdd(this.issueinfo)
+			  }
+			  
+			  console.log(result)
 			},
 			changeprice() {
 				this.$refs.popup.open('bottom');
@@ -256,12 +290,35 @@
 				this.selectedOption = 'location'
 			},
 			saveprice() {
-				this.issueinfo[this.selectedOption] = this.temp;
+				if(!Number(this.temp)){
+					uni.showToast({
+						title:'请填入数字',
+						icon:'error'
+					})
+				}
+				else{
+						this.issueinfo[this.selectedOption] = this.temp;
+				}	
 				this.$refs.popup.close();
+			},
+			valChange(e){
+				
+			},
+			async getlist(id){
+				let result=await ResourceInfo({rid:id});
+				this.issueinfo=result.data;
+				this.issueinfo.photourl.split(",").map(item=>{this.uploadPicsList.push({path:item})})
 			}
 		},
-		onLoad() {
-
+		onLoad(option) {
+			if(option.id){
+				this.getlist(option.id);
+			}
+			else{
+				this.issueinfo.location = this.info.address;
+				this.issueinfo.userid=this.info.id
+			}
+			
 		},
 		computed: {
 			inputValue: {
@@ -427,7 +484,16 @@
 				}
 			}
 		}
-
+		.num {
+			width: 97%;
+			display: flex;
+			margin: 20px 0;
+			justify-content: space-between;
+		
+			.right {
+				display: flex;
+			}
+		}
 		.address {
 			width: 97%;
 			display: flex;
