@@ -43,6 +43,15 @@
 					</view>
 					<view class="right">
 						<span>{{info.email}}</span>
+					</view>
+				</li>
+				<u-line />
+				<li>
+					<view class="left">
+						工号
+					</view>
+					<view class="right"  @click="popupinfo('worknum')">
+						<span>{{info.worknum}}</span>
 						<u-icon name="arrow-right" size="14" style="margin-left: 5px;"></u-icon>
 					</view>
 				</li>

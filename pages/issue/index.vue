@@ -45,15 +45,15 @@
 						<u-icon name="arrow-right" size="10" style="margin-left: 5px;"></u-icon>
 					</view>
 				</view>
-				<view class="num">
+				<view class="num" v-if="issueinfo.type==1">
 					<view class="left">
 						数量
 					</view>
-					<view class="right" >
-					<u-number-box v-model="issueinfo.num" bgColor="#eeeeee" @change="valChange"></u-number-box>
+					<view class="right">
+						<u-number-box v-model="issueinfo.num" bgColor="#eeeeee" @change="valChange"></u-number-box>
 					</view>
 				</view>
-				<view class="address" v-if="issueinfo.type==0">
+				<view class="address" v-if="issueinfo.type==1">
 					<view class="left">
 						交易地址
 					</view>
@@ -63,18 +63,26 @@
 					</view>
 				</view>
 				<view v-else>
-					<uni-file-picker ref="uploadFile" file-mediatype="all" v-model="issueinfo.url" @select="selectFile">
-						<view class="uploadfile flex-center">
-							<u-icon name="plus-circle" size="30" color="rgba(250, 176, 5, 1)"></u-icon>
-							<view>点击上传添加文件</view>
+					<view class="uploadfile flex-center" @click="selectFile()">
+						<u-icon name="plus-circle" size="30" color="rgba(250, 176, 5, 1)"></u-icon>
+						<view>点击上传添加文件</view>
+					</view>
+					<view v-for="(file,index) in uploadFileList" :key="index">
+						<view class="uplaodfiles">
+							<view class="">
+								{{file.name}}
+							</view>
+							<u-icon name="close" class="iclose" color="#000" size="20" @click="removeFile(index)" />
 						</view>
-
-					</uni-file-picker>
+					</view>
 				</view>
 			</view>
 			<u-divider></u-divider>
 		</section>
 		<section>
+			<view style="margin: 0 16px;">
+				选择图片
+			</view>
 			<view class="pics">
 				<view class="medias" v-for="( image, index ) in uploadPicsList" :key="index">
 					<image class="img" :src="image.path" :data-src="image" @tap="previewImage(index)"
@@ -89,8 +97,7 @@
 		</section>
 		<uni-popup ref="popup" type="bottom">
 			<view class="popupcomment">
-				<input :type="selectedOption=='price'?'digit':'text'"
-					style="padding:10px;height: inherit;border: 0 !important;outline: none;width: 300px;"
+				<input type="text" style="padding:10px;height: inherit;border: 0 !important;outline: none;width: 300px;"
 					v-model="inputValue" :focus="true">
 				<view class="flex-center"
 					style="height: 30px;width: 60px;border-radius: 20px;margin: 10px;background-color: #ffc300;border: 0;font-size: 14px;font-weight: 700;"
@@ -101,8 +108,9 @@
 </template>
 
 <script>
+	var AfDocument = uni.requireNativePlugin("Aq-ChooseFile");
 	import {
-		reqextname
+		verification
 	} from '@/utils/regular.js'
 	import {
 		TfileUpload,
@@ -124,13 +132,13 @@
 			return {
 				sortbtn: [{
 					type: 'default',
-					text: '非电子类资源'
+					text: '电子类资源'
 				}, {
 					type: 'default',
-					text: '电子类资源'
+					text: '非电子类资源'
 				}],
 				temp: null,
-				imageValue: [],
+				uploadFileList: [],
 				currentTab: 0,
 				uploadPicsList: [],
 				selectedOption: 'price',
@@ -141,7 +149,7 @@
 					price: null,
 					location: "",
 					type: 0,
-					num: 0,
+					num: 1,
 					url: [],
 					userid: "",
 				}
@@ -152,6 +160,9 @@
 				uni.navigateBack({
 					delta: 1,
 				});
+			},
+			success() {
+				console.log(1)
 			},
 			changesearch(index) {
 				this.issueinfo.type = index;
@@ -167,51 +178,63 @@
 					urls,
 				});
 			},
-			uploadFile(filePath, name, uuid, progressCallBack) {
-				return new Promise(resolve => {
-					const uploadTask = uni.uploadFile({
-						url: 'http://47.115.220.70:8082/tfile/upload',
-						filePath,
-						formData: {
-							name: 'file'
-						},
-						success: async (uploadFileRes) => {
-							let {
-								data
-							} = uploadFileRes
-							const {
-								data: d
-							} = JSON.parse(data)
-							resolve({
-								url: d,
-								uuid,
-								name
-							})
+			selectFile() {
+				const plugin = uni.requireNativePlugin('GuoWei-SelectFileModule')
+				plugin.chooseFile({
+						count: 10,
+						extension: ["docx", "xlsx", "pptx", "mp3"],
+						rootDirName: '根目录',
+						themeColor: '#18b566',
+						folderIconColor: '#ffc300',
+						fileIconColor: '#0000ff',
+						showHiddenFiles: false
+					},
+					result => {
+						if (result.code == 0) {
+							this.uploadFile(result.files)
 
 						}
-					})
-					uploadTask.onProgressUpdate(res => {
-						progressCallBack(res)
-					})
-				})
-
+						console.log(result) // result 看下方“回调说明”
+					}
+				)
 			},
-			async selectFile(e) {
-				console.log(e)
-				let _this = this;
-				const name = e.tempFiles[0]['name'];
-				const uuid = e.tempFiles[0]['uuid'];
-				const tempFilePaths = e.tempFilePaths;
-				const res = await this.uploadFile(tempFilePaths[0], name, uuid, function(progress) {
-					_this.$refs.uploadFile.setProgressByCustomUplaod(uuid, progress.progress)
-				})
-				console.log(res)
-				let item = {
-					name: res.name,
-					extname: reqextname(res.url),
-					url: res.url
+			async uploadFile(list) {
+				let uploadlist = []
+				let promises = []
+				for (let item of list) {
+					if (item.url.slice(0, 4) == 'http') {
+						uploadlist.push(item);
+						continue
+					}
+					const promise = new Promise((resolve, reject) => {
+						uni.uploadFile({
+							url: 'http://47.115.220.70:8082/tfile/upload',
+							filePath: item.path,
+							name: 'file',
+							success: (uploadFileRes) => {
+								const result = JSON.parse(uploadFileRes.data).data;
+								const newItem = {
+									name: item.name,
+									url: result
+								};
+								resolve(newItem);
+							},
+							fail: (error) => {
+								reject(error)
+							}
+						})
+					})
+					promises.push(promise)
 				}
-				this.issueinfo.url.push(item)
+				uni.showLoading({
+					title: '上传中'
+				});
+				uploadlist = [...uploadlist, ...await Promise.all(promises)]
+				uni.hideLoading();
+				this.uploadFileList = [...this.uploadFileList, ...uploadlist]
+			},
+			removeFile(index) {
+				this.uploadFileList.splice(index, 1);
 			},
 			removeImage(index) {
 				this.uploadPicsList.splice(index, 1);
@@ -240,46 +263,82 @@
 				});
 			},
 			async uploadImage(list) {
-			  let uploadlist=[]
-			  let promises = []
-			  for (let item of list) {
-				  console.log(item.path.slice(0,4))
-				if(item.path.slice(0,4)=='http'){
-					uploadlist.push(item);
-					continue
+				let uploadlist = []
+				let promises = []
+				for (let item of list) {
+					console.log(item.path.slice(0, 4))
+					if (item.path.slice(0, 4) == 'http') {
+						uploadlist.push(item.path);
+						continue
+					}
+					const promise = new Promise((resolve, reject) => {
+						uni.uploadFile({
+							url: 'http://47.115.220.70:8082/tfile/upload',
+							filePath: item.path,
+							name: 'file',
+							success: (uploadFileRes) => {
+								resolve(JSON.parse(uploadFileRes.data).data)
+							},
+							fail: (error) => {
+								reject(error)
+							}
+						})
+					})
+					promises.push(promise)
 				}
-			    const promise = new Promise((resolve, reject) => {
-			      uni.uploadFile({
-			        url: 'http://47.115.220.70:8082/tfile/upload',
-			        filePath: item.path,
-			        name: 'file',
-			        success: (uploadFileRes) => {
-			          resolve(JSON.parse(uploadFileRes.data).data)
-			        },
-			        fail: (error) => {
-			          reject(error)
-			        }
-			      })
-			    })
-			    promises.push(promise)
-			  }
-				uploadlist=[...uploadlist,...await Promise.all(promises)] 
-				console.log(uploadlist)
+				uploadlist = [...uploadlist, ...await Promise.all(promises)]
 				return uploadlist
 			},
 			async issue() {
-
-			  const urls = await this.uploadImage(this.uploadPicsList)
-			  this.issueinfo.photourl = urls
-			  let result;
-			  if(this.issueinfo.id){
-			  	result = await ResourceUpdate(this.issueinfo)
-			  }
-			  else{
-				result = await ResourceAdd(this.issueinfo)
-			  }
-			  
-			  console.log(result)
+				let validator = verification(this.issueinfo)
+				if (!validator.valid) {
+					uni.showToast({
+						title: validator.message,
+						icon: 'error'
+					})
+					return
+				}
+				if (!this.uploadPicsList.length) {
+					uni.showToast({
+						title: '图片不能为空',
+						icon: 'error'
+					})
+					return
+				}
+				const urls = await this.uploadImage(this.uploadPicsList)
+				this.issueinfo.photourl = urls
+				this.issueinfo.url = JSON.stringify(this.uploadFileList )
+				this.issueinfo.photourl = this.issueinfo.photourl.join(",")
+				let result;
+				if (this.issueinfo.rid) {
+					const propsToKeep = ["userid", "type", "title", "content", "price", "photourl", "location", "num",
+						"url"
+					];
+					const newObj = Object.entries(this.issueinfo).reduce((obj, [key, value]) => {
+						if (propsToKeep.includes(key)) {
+							obj[key] = value;
+						}
+						return obj;
+					}, {});
+					newObj.id = this.issueinfo.rid
+					result = await ResourceUpdate(newObj)
+				} else {
+					result = await ResourceAdd(this.issueinfo)
+				}
+				if (result.status == 200) {
+					uni.showToast({
+						icon: 'success',
+						title: result.message
+					})
+				}
+				this.issueinfo = {}
+				this.uploadFileList = [];
+				this.uploadPList = [];
+				this.issueinfo.price = 0;
+				uni.switchTab({
+					url:'/pages/index/index'
+				})
+				
 			},
 			changeprice() {
 				this.$refs.popup.open('bottom');
@@ -290,35 +349,40 @@
 				this.selectedOption = 'location'
 			},
 			saveprice() {
-				if(!Number(this.temp)){
+				if (!Number(this.temp) && this.selectedOption=='price') {
 					uni.showToast({
-						title:'请填入数字',
-						icon:'error'
+						title: '请填入数字',
+						icon: 'error'
 					})
+				} else {
+					this.issueinfo[this.selectedOption] = this.temp;
 				}
-				else{
-						this.issueinfo[this.selectedOption] = this.temp;
-				}	
 				this.$refs.popup.close();
 			},
-			valChange(e){
-				
+			valChange(e) {
+
 			},
-			async getlist(id){
-				let result=await ResourceInfo({rid:id});
-				this.issueinfo=result.data;
-				this.issueinfo.photourl.split(",").map(item=>{this.uploadPicsList.push({path:item})})
+			async getlist(id) {
+				let result = await ResourceInfo({
+					rid: id
+				});
+				this.issueinfo = result.data;
+				this.issueinfo.photourl.split(",").map(item => {
+					this.uploadPicsList.push({
+						path: item
+					})
+				})
+				this.issueinfo.url = JSON.parse(this.issueinfo.url)
 			}
 		},
 		onLoad(option) {
-			if(option.id){
+			if (option.id) {
 				this.getlist(option.id);
-			}
-			else{
+			} else {
 				this.issueinfo.location = this.info.address;
-				this.issueinfo.userid=this.info.id
+				this.issueinfo.userid = this.info.id
 			}
-			
+
 		},
 		computed: {
 			inputValue: {
@@ -328,6 +392,13 @@
 				set(value) {
 					this.temp = value;
 				}
+			},
+			UploadFileObject() {
+				if (typeof this.issueinfo.url === 'object') {
+					return this.issueinfo.url
+				} else if (typeof this.issueinfo.url === 'string') {
+					return JSON.parse(this.issueinfo.url)
+				} else return {}
 			},
 			...mapState({
 				token: (state) => state.user.token,
@@ -340,7 +411,7 @@
 <style lang="scss" scoped>
 	header {
 		width: 375px;
-		height: 70px;
+		height: 90px;
 		display: flex;
 		align-items: flex-end;
 
@@ -354,9 +425,9 @@
 			margin-right: 10px;
 			background-color: #ffc300;
 			width: 50px;
-			height: 25px;
+			height: 35px;
 			text-align: center;
-			line-height: 25px;
+			line-height: 35px;
 			border-radius: 20px;
 			font-weight: 500;
 
@@ -393,7 +464,7 @@
 		align-content: center;
 		padding-top: 20rpx;
 		padding-bottom: 20rpx;
-		margin: 20px 12px;
+		margin: 0px 16px;
 		width: 375px;
 
 		.medias {
@@ -484,16 +555,18 @@
 				}
 			}
 		}
+
 		.num {
 			width: 97%;
 			display: flex;
 			margin: 20px 0;
 			justify-content: space-between;
-		
+
 			.right {
 				display: flex;
 			}
 		}
+
 		.address {
 			width: 97%;
 			display: flex;
@@ -513,15 +586,28 @@
 		}
 
 		.uploadfile {
-			width: 343px;
+			width: 300px;
+			margin: 0 auto;
 			height: 89px;
 			opacity: 1;
 			border-radius: 6px;
 			margin-top: 10px;
 			background: rgba(238, 241, 244, 1);
-
 			border: 1px dotted rgba(78, 75, 102, 1);
 			flex-direction: column;
+		}
+
+		.uplaodfiles {
+			width: 300px;
+			height: 40px;
+			align-items: center;
+			margin: 10px auto;
+			display: flex;
+			justify-content: space-between;
+			border: 1px #eee solid;
+			border-radius: 5px;
+			background: rgba(238, 241, 244, 1);
+
 		}
 	}
 

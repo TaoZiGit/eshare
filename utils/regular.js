@@ -120,3 +120,18 @@ export const AlterIssueRegex = (input) => {
 		return validator(input[key]);
 	}
 }
+
+export const verification = (input) => {
+	console.log(input.price)
+	if(!input.title) return {valid: false,message: '标题不能为空'};
+	if(!input.content) return {valid: false,message: '内容不能为空'};
+	if(!input.price) return {valid: false,message: '价格不能为0'};
+	if(input.type){
+		if(!input.location) return {valid: false,message: '地址不能为空'};
+		if(!input.num) return {valid: false,message: '数量不能为0'};
+	}
+	else{
+		if(!input.url) return {valid: false,message: '文件不能为空'};
+	}
+	return {valid: true,message: ''};
+}

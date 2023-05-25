@@ -18,6 +18,14 @@ export const Login=async(data)=>{
 	})
 	return result
 }
+export const register=async(data)=>{
+	let result =await api({
+		url:'/user/register',
+		method:'POST',
+		data,
+	})
+	return result
+}
 export const UserLoginByPassword=async(data)=>{
 	let result =await api({
 		url:'/user/loginByPassword',
@@ -67,3 +75,49 @@ export const PayGet=async(data)=>{
 	UserGetUserMessage()
 	return result
 }
+export const UserFocuslist=async(data)=>{
+	
+	let result =await api({
+		url:'/user/focuslist',
+		method:'GET',
+		data,
+	})
+	return result
+}
+export const UserFocus=async(data)=>{
+	let result =await api({
+		url:'/user/focus',
+		method:'PUT',
+		data,
+		headers:{token:getToken()},
+	})
+
+	return result
+}
+export const UserFaslist=async(data)=>{
+	let result =await api({
+		url:'/user/faslist',
+		method:'GET',
+		data,
+	})
+	return result
+}
+export const HistoryAll=async(data)=>{
+	let result =await api({
+		url:'/history/all',
+		method:'GET',
+		data,
+	})
+	return result
+}
+export const PayBuy=async(data)=>{
+	let result =await api({
+		url:'/pay/buy',
+		method:'PUT',
+		data,
+		headers:{token:getToken()},
+	})
+	UserGetUserMessage()
+	return result
+}
+

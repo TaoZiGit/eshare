@@ -27,3 +27,21 @@ export const CommentAppend=async(data)=>{
 	return result
 }
 
+export const CommentGood=async(data)=>{
+	let result =await api({
+		url:'/comment/good',
+		method:'POST',
+		data,
+	})
+	return result
+}
+export const CommentDelete=async(data)=>{
+	let result =await api({
+		url:'/comment/delete',
+		method:'DELETE',
+		data,
+	})
+	return result
+}
+
+

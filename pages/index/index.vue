@@ -5,7 +5,7 @@
 				<view class="search-input">
 					<u-input v-model="searchvalue" type="text" placeholder="搜索想要的资源" border="true"
 						style="background-color: #fff;border-radius: 12px;" />
-					<view class="searchbtn" @click="Tosearch({order:2,type:0,search:searchvalue})">搜索</view>
+					<view class="searchbtn" @click="Tosearch({order:0,type:null,search:searchvalue})">搜索</view>
 
 				</view>
 			</view>
@@ -13,14 +13,16 @@
 				<view class="lists">
 					<ul>
 						<li style="margin-right: 20px;">
-							<view class="flex-center" style="flex-direction: column;" @click="Tosearch({order:1,type:0,search:''})">
+							<view class="flex-center" style="flex-direction: column;"
+								@click="Tosearch({order:0,type:1,search:''})">
 								<h3 style="font-size:20px font-weight:700">非电子类资源</h3>
 								<image src="../../static/img/unelectronic.jpg" mode="scaleToFill"
 									style="width: 75px;height: 63px;"></image>
 							</view>
 						</li>
 						<li>
-							<view class="flex-center" style="flex-direction: column;"  @click="Tosearch({order:0,type:0,search:''})">
+							<view class="flex-center" style="flex-direction: column;"
+								@click="Tosearch({order:0,type:0,search:''})">
 								<h3 style="font-size:20px font-weight:700">电子类资源</h3>
 								<image src="../../static/img/electronic.jpg" mode="scaleToFill"
 									style="width: 66px;height: 63px;"></image>
@@ -49,7 +51,8 @@
 	} from "@/utils/Token.js"
 	import Lists from '@/components/rescourelist.vue'
 	import {
-		getindex,ResourceSearch
+		getindex,
+		ResourceSearch
 	} from '@/api/resource.js'
 	import {
 		UserGetUserMessage
@@ -70,7 +73,7 @@
 					text: '默认排序'
 				}, {
 					type: 'default',
-					text: '按点赞排序'
+					text: '按点赞数排序'
 				}, {
 					type: 'default',
 					text: '按收藏数排序'
@@ -80,7 +83,7 @@
 					current: 1,
 					size: 3,
 					type: 0,
-					order:0,
+					order: 1,
 				},
 				indexlist: [],
 			}
@@ -89,6 +92,13 @@
 			this.getuserList()
 			this.getlist()
 
+		},
+		onPullDownRefresh() {
+			this.getuserList()
+			this.changesearch(this.currentTab);
+			setTimeout(function() {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		onReachBottom() {
 			this.pagelist.current++;
@@ -100,7 +110,8 @@
 				this.pagelist.type = index;
 				this.pagelist.current = 1;
 				this.indexlist = [],
-					this.getlist();
+				this.getlist();
+				this.getuserList()
 			},
 			Todeatil(id) {
 				uni.navigateTo({
@@ -122,13 +133,12 @@
 						icon: 'error'
 					})
 				} else this.indexlist = [...this.indexlist, ...result.data.resourcesList];
-				console.log(result)
 			},
-			Tosearch(info){
+			Tosearch(info) {
 				uni.navigateTo({
 					url: `/pages/search/index?type=${info.type}&order=${info.order}&search=${info.search}`, // 路由的页面路径
 				});
-				
+
 			}
 		},
 		computed: {

@@ -34,14 +34,12 @@ export default{
 	methods:{
 		async Toindex(){
 			let token=getToken()
-			console.log(token)
 			if(token){
-				let result=await UserGetUserMessage()
 				uni.switchTab({
 					url:"/pages/index/index"
 				})
 			}else{
-				uni.navigateTo({
+				uni.redirectTo({
 					url:"/pages/login/login"
 				})
 			}

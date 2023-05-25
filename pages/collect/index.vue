@@ -5,7 +5,7 @@
 			<view style="position: absolute;left:50%;transform: translateX(-50%);">收藏</view>
 		</header>
 		<Lists :list="list" />
-		</view>
+	</view>
 </template>
 
 <script>
@@ -31,15 +31,6 @@
 				this.listinfo.userid=this.info.id
 				let result=await ResourceCollections(this.listinfo)
 				this.list=result.data.collectionsDataList;
-			},
-			Todeatil(id){
-				console.log(id)
-				uni.navigateTo({
-				url:'/pages/detail/index?id='+id,
-				  success: function () {
-				    console.log('路由到其他页面成功');
-				  }
-				});
 			},
 			routeback(){
 				uni.navigateBack({

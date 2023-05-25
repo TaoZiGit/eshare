@@ -95,3 +95,28 @@ export const ResourceUpdate=async(data)=>{
 	return result
 }
 
+export const PayGet=async(data)=>{
+	let result =await api({
+		url:'/pay/buy',
+		method:'PUT',
+		data,
+		headers:{token:getToken()},
+	})
+	return result
+}
+export const ResourceDelete=async(data)=>{
+	let result =await api({
+		url:'/resource/delete',
+		method:'DELETE',
+		data,
+	})
+	return result
+}
+export const ResourceGoodlist=async(data)=>{
+	let result =await api({
+		url:'/resource/goodlist',
+		method:'GET',
+		data,
+	})
+	return result
+}

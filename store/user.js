@@ -1,11 +1,12 @@
-import {getToken} from '@/utils/Token.js'
+import {getToken,removeToken} from '@/utils/Token.js'
 import {UserUpdateUserMessage} from "@/api/user.js"
 import {AlterIssueRegex} from "@/utils/regular.js"
 const state={ 
 	token:"",
 	info:{
-		id:'1a0926236fd9440d589a7f21372911b6',
-		address:'桂林电子科技大学'
+		id:'22a6c5ccceca249d004f3c96d9f8b535',
+		address:'桂林电子科技大学',
+		money:0
 	},
 };
 
@@ -15,6 +16,12 @@ const mutations={
 	},
 	ALTERIMFO(state,info){
 		state.info={ ...state.info, ...info };
+	},
+	RESET(state){
+		state.info={}
+	},
+	PAYBUY(state,num){
+		state.info={ ...state.info, ...{money:num} };
 	}
 }
 const actions={
@@ -22,6 +29,10 @@ const actions={
 		let token=getToken();
 		console.log(token)
 		commit("SETTOKEN",token);
+	},
+	async paybuy({commit},num){
+		let result=await UserUpdateUserMessage(newInfo);
+		commit("ALTERIMFO",result.data);
 	},
 	async alterinfo({state,commit},info){
 		let regexsult=AlterIssueRegex(info)
@@ -45,6 +56,10 @@ const actions={
 				})
 		}
 		commit("ALTERIMFO",info);
+	},
+	resetlogin({commit}){
+		commit("RESET")
+		removeToken()
 	}
 }
 const getters={

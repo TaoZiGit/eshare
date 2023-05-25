@@ -70,6 +70,24 @@
 		}    
 	},
 	{
+		"path" : "pages/afford/myself",
+		"style" : {
+	
+		}    
+	},
+	{
+		"path" : "pages/follow/follow",
+		"style" : {
+	
+		}    
+	},
+	{
+		"path" : "pages/follow/followed",
+		"style" : {
+	
+		}    
+	},
+	{
 		"path" : "pages/like/index",
 		"style" : {
 

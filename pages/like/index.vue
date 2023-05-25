@@ -2,7 +2,7 @@
 	<view>
 		<header>
 			<u-icon name="arrow-left" size="20" style="margin-left: 5px;" @click="routeback"></u-icon>
-			<view style="position: absolute;left:50%;transform: translateX(-50%);">收藏</view>
+			<view style="position: absolute;left:50%;transform: translateX(-50%);">我的喜欢</view>
 		</header>
 		<Lists :list="list" />
 	</view>
@@ -10,7 +10,7 @@
 
 <script>
 	import {mapState} from "vuex";
-	import {ResourceCollections} from "@/api/resource.js"
+	import {ResourceGoodlist} from "@/api/resource.js"
 	import Lists from '@/components/rescourelist.vue'
 	export default {
 		components: {
@@ -29,8 +29,10 @@
 		methods: {
 			async getlist(){
 				this.listinfo.userid=this.info.id
-				let result=await ResourceCollections(this.listinfo)
-				this.list=result.data.collectionsDataList;
+				console.log(this.listinfo)
+				let result=await ResourceGoodlist(this.listinfo)
+				console.log(result)
+				this.list=result.data.datalist;
 			},
 			Todeatil(id){
 				console.log(id)

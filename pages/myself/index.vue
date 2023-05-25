@@ -11,11 +11,13 @@
 					</view>
 					
 					<view style="margin-left: 10px;">
-						<view class="name">
+						<view class="name" style="margin-top: 10px;">
 							{{info.name?info.name:'用户'+info.email}}
 						</view>
 						<view class="adress">
-							所在地：{{info.address?info.address:'暂无'}}
+							<view class="">
+								所在地：
+							</view> {{info.address?info.address:'暂无'}}
 						</view>
 					</view>
 					<view class="setting flex-center" @click="ToAlter()">
@@ -31,12 +33,12 @@
 							<span>{{info.collectionsnum}}</span>
 								<span>收藏</span>
 						</li>
-						<li class="flex-center">
-							<span>{{info.followersnum}}</span>
+						<li class="flex-center" @click="ToFollow()">
+							<span>{{info.myfollowersnum}}</span>
 							<span>关注</span>
 						</li>
-						<li class="flex-center">
-							<span>{{info.myfollowersnum}}</span>
+						<li class="flex-center" @click="ToFollowed()">
+							<span>{{info.followersnum}}</span>
 							<span>粉丝</span>
 						</li>
 					</ul>
@@ -67,7 +69,7 @@
 						<image src="../../static/img/daifahuo.jpg" mode=""></image>
 						<span>我喜欢的</span>
 					</li>
-					<li class="flex-center">
+					<li class="flex-center" @click="Tobuy">
 						<image src="../../static/img/daishouhuo.jpg" mode=""></image>
 						<span>我购买的</span>
 					</li>
@@ -75,11 +77,11 @@
 			</section>
 			<section class="other">
 				<ul>
-					<li>
+					<li  @click="changelogin()">
 						<u-icon name="reload" color="#ffc300" size="25"></u-icon>
 						<span>切换账号</span>
 					</li>
-					<li>
+					<li @click="resetlogin()">
 						<u-icon name="minus-square-fill" color="#ffc300" size="25"></u-icon>
 						<span>退出登录</span>
 						
@@ -124,16 +126,33 @@
 				Tolike(){
 					uni.navigateTo({url:'/pages/like/index'})
 				},
+				ToFollow(){
+					uni.navigateTo({url:'/pages/follow/follow'})
+				},
+				ToFollowed(){
+					uni.navigateTo({url:'/pages/follow/followed'})
+				},
 				Tobuy(){
-					uni.navigateTo({url:'/pages/like/index'})
+					uni.navigateTo({url:'/pages/afford/myself'})
+				},
+				resetlogin(){
+					this.$store.dispatch("resetlogin")
+					uni.showToast({
+						title:'退出成功！',
+						icon:'success'
+					})
+					uni.redirectTo({
+						url:'/pages/login/login'
+					})
+				},
+				changelogin(){
+					console.log(1)
+					uni.navigateTo({url:'/pages/login/login'})
 				}
 				
 			},
 			onLoad() {
-				if(!this.token){
-					this.getuserList()
-				}
-				console.log(this.info,this.token)
+				this.getuserList()
 			},
 			computed: {
 				...mapState({

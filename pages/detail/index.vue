@@ -14,7 +14,7 @@
 				<swiper-item v-for="(item ,index) in info.photourl" :key="index"
 					@click="previewImage(info.photourl,index)">
 					<view class="swiper-item">
-						<image :src="item" mode="scaleToFill" lazy-load style="width: 375px;height: 275px;">
+						<image :src="item" mode="aspectFill" lazy-load style="width: 375px;height: 275px;">
 						</image>
 					</view>
 				</swiper-item>
@@ -35,16 +35,21 @@
 			<view class="publisher">
 				<u-avatar style="margin-left: 16px;" :src="info.userurl">
 				</u-avatar>
-				<view class="name">
+				<view class="name" style="margin-left: 20px;">
 					<h2 style="font-size: 14px;color: rgba(0, 0, 0, 0.78);">{{info.username}}
 					</h2>
 					<view class="publishaddress">
-						发布于{{info.location}}
+						<span v-if="info.type==1">
+							发布于{{info.location}}
+						</span>
+						<span v-else>
+							发布于{{info.updatetime&&info.updatetime.split(" ")[0]}}
+						</span>
 					</view>
 				</view>
-				<view class="focus" @click="changefoucs()">
-					<u-icon name="plus" size="13" :color="info.isfoucs?'#fab005':'rgba(0, 0, 0, 1)'"></u-icon>
-					<span>&nbsp;关注</span>
+				<view class="focus" @click="changefoucs()" v-show="info.userid!==userinfo.id" :style="`background:${info.isfoucs?'#fab005':''}`">
+					<u-icon name="plus" size="13" color="rgba(0, 0, 0, 1)" v-if="!info.isfoucs"></u-icon>
+					<span>&nbsp;{{info.isfoucs?'已':''}}关注</span>
 				</view>
 			</view>
 			<view class="resource-details">
@@ -80,23 +85,27 @@
 					<view class="commentlist">
 						<u-avatar :src="item.mainComent.photourl" size="30" style="margin-left: 10px;">
 						</u-avatar>
-						<view style="display: flex;flex-direction: column;margin-left: 10px;">
-							<view>
-								<span class="commentname" style="font-weight: 700;">{{item.mainComent.username}}
-								</span>
-								<span class="createtime"
-									style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">{{formattedTime(item.mainComent.createtime)}}
-								</span>
-							</view>
-							<view style="display: flex;justify-content: flex-start;">
-								<view
-									style="font-size: 15px;padding: 6px 3px;width: 235px; word-wrap: break-word;word-break: break-all;text-align: justify;">
-									{{item.mainComent.content}}
+						<view class="firstcomment">
+							<view style="display: flex;justify-content: space-between;">
+								<view>
+									<span class="commentname" style="font-weight: 700;">{{item.mainComent.username}}
+									</span>
+									<span class="createtime"
+										style="padding-left: 5px;font-size: 9px;color: rgba(128, 128, 128, 0.4);">{{item.mainComent.createtime.split(" ")[0]}}
+									</span>
+									<view style="display: flex;justify-content: flex-start;">
+										<view
+											style="font-size: 15px;padding: 6px 3px;width: 200px; word-wrap: break-word;word-break: break-all;text-align: justify;">
+											{{item.mainComent.content}}
+										</view>
+									</view>
 								</view>
 								<view style="display: flex;">
 									<view
 										style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
-										<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)" size="20" @click="changelikecomment(item.mainComent)">
+										<u-icon :name="!item.mainComent.islike?'thumb-up':'thumb-up-fill'"
+											color="rgba(255, 144, 0, 1)" size="20"
+											@click="changelikecomment(item.mainComent)">
 										</u-icon>
 										{{item.mainComent.goodsnum}}
 									</view>
@@ -104,36 +113,42 @@
 										<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20"
 											@click="CommentSecond(item.mainComent.id,item.mainComent.userid,item.mainComent.id,item.mainComent.username)"></u-icon>
 									</view>
+									<view style="margin-left: 5px;" v-if="item.mainComent.userid==userinfo.id">
+										<u-icon name="trash" color="rgba(255, 144, 0, 1)" size="20"
+											@click="deleteComment(item.mainComent)"></u-icon>
+									</view>
 								</view>
 							</view>
-							<view class="commentlist" v-for="sceond of item.childrenComment" :key="sceond.id"
-								style="margin-top: 4px;justify-content: space-between;">
+
+
+							<view class="commentlist" v-for="sceond of item.childrenComment.slice(0,3)" :key="sceond.id" style="margin-top: 4px;">
 								<u-avatar :src="sceond.photourl" size="30"></u-avatar>
-								<view style="display: flex;flex-direction: column;margin-left: 5px;">
-									<view>
-										<span class="commentname"
-											style="font-weight: 700;font-size:15px">{{sceond.username}}</span>
-										<span class="createtime"
-											style="padding-left: 5px;font-size: 12px;color: rgba(128, 128, 128, 0.4);">{{sceond.updatetime.split(" ")[0]}}</span>
-										<view style="display: flex;align-items: flex-start;">
-											<view
-												style="font-size: 13px;padding: 3px 0;width: 185px; word-wrap: break-word;word-break: break-all;text-align: justify;">
-												{{sceond.content}}
-											</view>
-											<view style="display: flex;">
+								<view style="margin-left: 10px;">
+									<view style="display: flex;justify-content: space-between;width: 240px;">
+										<view>
+											<span class="commentname"
+												style="font-weight: 700;font-size:15px">{{sceond.username}}</span>
+											<span class="createtime"
+												style="padding-left: 5px;font-size: 12px;color: rgba(128, 128, 128, 0.4);">{{sceond.updatetime.split(" ")[0]}}
+											</span>
+											<view style="display: flex;align-items: flex-start;">
 												<view
-													style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
-													<u-icon name="thumb-up" color="rgba(255, 144, 0, 1)"
-														size="20"></u-icon>
-													{{sceond.goodsnum}}
-												</view>
-												<view style="margin-left: 5px;">
-													<u-icon name="chat" color="rgba(255, 144, 0, 1)" size="20"
-														@click="CommentSceond()"></u-icon>
+													style="font-size: 13px;padding: 3px 0;width: 185px; word-wrap: break-word;word-break: break-all;text-align: justify;">
+													{{sceond.content}}
 												</view>
 											</view>
 										</view>
+										<view style="display: flex;">
+											<view
+												style="font-size: 12px;display: flex;flex-direction: column; align-items: center;margin-left: 10px;color:rgba(128, 128, 128, 1);">
+												<u-icon :name="!sceond.islike?'thumb-up':'thumb-up-fill'"
+													color="rgba(255, 144, 0, 1)" size="20"
+													@click="changelikecomment(sceond)"></u-icon>
+												{{sceond.goodsnum}}
+											</view>
+										</view>
 									</view>
+								
 								</view>
 							</view>
 						</view>
@@ -167,10 +182,13 @@
 	import {
 		CommentAll,
 		CommentAdd,
-		CommentAppend
+		CommentAppend,
+		CommentGood,
+		CommentDelete
 	} from '@/api/comment.js'
 	import {
-		UserGetUserMessage
+		UserGetUserMessage,
+		UserFocus
 	} from '@/api/user.js'
 	import timeFrom from '@/utils/timeFrom.js'
 	import {
@@ -230,7 +248,19 @@
 			formattedTime(timestamp) {
 				return timeFrom(timestamp)
 			},
+			async deleteComment(item){
+				let result=await CommentDelete({commentid:item.id,myid:this.userinfo.id})
+				if(result.status==200){
+					uni.showToast({
+						title:'删除成功',
+						icon:'success'
+					})
+					this.getcomment()
+				}
+				
+			},
 			async commentadd() {
+				console.log(this.userinfo)
 				if (this.commenttext.trim()) {
 					if (!this.userinfo.id) {
 						let result = await UserGetUserMessage()
@@ -245,7 +275,7 @@
 						this.commenttext = this.commenttext.split(":")[1]
 						let result = await CommentAppend({
 							mainid: this.commentinfo.firstid,
-							userid: this.commentinfo.userid,
+							userid: this.userinfo.id,
 							myid: this.userinfo.id,
 							content: this.commenttext,
 							commentid: this.commentinfo.commentid
@@ -284,6 +314,9 @@
 				this.commentlist = comments.data.dataList
 			},
 			async getdeatil() {
+				if (!this.userinfo.id) {
+					await UserGetUserMessage()
+				}
 				const {
 					info,
 					comments
@@ -306,31 +339,52 @@
 				};
 			},
 			async changelike() {
-				const[result1,result2]= await Promise.all([ResourceGood({rid: this.commentinfo.rid,userid: this.userinfo.id,}),getDeatil({rid: this.commentinfo.rid,userid: this.userinfo.id,}).then(result => result.data)]) 
-				if(result1.status==200){
-					this.info.islike=!this.info.islike
+				const [result1, result2] = await Promise.all([ResourceGood({
+					rid: this.commentinfo.rid,
+					userid: this.userinfo.id,
+				}), getDeatil({
+					rid: this.commentinfo.rid,
+					userid: this.userinfo.id,
+				}).then(result => result.data)])
+				if (result1.status == 200) {
+					this.info.islike = !this.info.islike
 				}
 			},
 			async changecollect() {
-				const[result1,result2]= await Promise.all([ResourceCollect({rid: this.commentinfo.rid,userid: this.userinfo.id}),getDeatil({rid: this.commentinfo.rid,userid: this.userinfo.id}).then(result => result.data)]) 
-				if(result1.status==200){
-					this.info.iscollect=!this.info.iscollect
+				const [result1, result2] = await Promise.all([ResourceCollect({
+					rid: this.commentinfo.rid,
+					userid: this.userinfo.id
+				}), getDeatil({
+					rid: this.commentinfo.rid,
+					userid: this.userinfo.id
+				}).then(result => result.data)])
+				if (result1.status == 200) {
+					this.info.iscollect = !this.info.iscollect
 				}
 			},
 			async changelikecomment(item) {
-				let result=await CommentGood({commentid:item.id,userid: this.userinfo.id})
-				if(result1.status==200){
-					item.goodsnum
-				}
+				console.log(item)
+				let result = await CommentGood({
+					commentid: item.id,
+					userid: this.userinfo.id
+				})
+				item.goodsnum+=item.islike?-1:1;
+				item.islike=!item.islike
+				
+				// if (result1.status == 200) {
+				// 	item.goodsnum
+				// }
 			},
 			async changefoucs() {
-				console.log(this.info.isfoucs)
-				/* await ResourceCollect({
-					rid: this.commentinfo.rid,
-					userid: this.userinfo.id,
-				}) */
+				let result=await UserFocus({
+					userid: this.info.userid,
+					myid: this.userinfo.id,
+				})
+				if(result.status==200){
+					this.info.isfoucs=!this.info.isfoucs
+				}
 			},
-			buy(){
+			buy() {
 				uni.navigateTo({
 					url: `/pages/afford/index?id=${this.commentinfo.rid}`, // 路由的页面路径
 					success: function() {
@@ -340,9 +394,8 @@
 			}
 		},
 		onLoad(option) {
-			this.commentinfo.rid = option.id || 'be8a5570-5e61-422d-8bb3-7b0f410c1857'
+			this.commentinfo.rid = option.id || '2bd0fadb-456a-46da-ae03-0ef027387739'
 			this.getdeatil();
-			document.body.style.backgroundColor = '#fff';
 		},
 		computed: {
 			...mapState({
@@ -382,6 +435,7 @@
 		border-radius: 16px 16px 0px 0px;
 		position: relative;
 		padding-bottom: 50px;
+
 		.price {
 			padding: 20px 16px 0;
 			font-size: 20px;
@@ -402,7 +456,7 @@
 
 		.publisher {
 			display: flex;
-			justify-content: space-between;
+			// justify-content: space-between;
 			align-items: center;
 
 			.publishaddress {
@@ -415,6 +469,7 @@
 			}
 
 			.focus {
+				margin-left: 15px;
 				width: 57.05px;
 				height: 27px;
 				border-radius: 12px;
@@ -429,8 +484,6 @@
 					color: rgba(0, 0, 0, 0.86);
 					font-weight: 700;
 				}
-
-				margin-right: 23px;
 			}
 		}
 
@@ -486,6 +539,13 @@
 	.commentlist {
 		display: flex;
 		align-items: flex-start;
+
+		.firstcomment {
+			display: flex;
+			flex-direction: column;
+			margin-left: 10px;
+			width: 280px;
+		}
 	}
 
 	.botton {

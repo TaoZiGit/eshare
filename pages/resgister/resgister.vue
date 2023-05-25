@@ -9,12 +9,19 @@
 	</view>
 	<view class="email">
 		邮箱号：
-		<input type="text" v-model="email">
+		<input type="text" v-model="registerinfo.email">
+	</view>
+	<view class="password" >
+		密码：
+		<view class="password-input" style="display: flex;align-items: center;justify-content: space-between;">
+			<input :type="type" placeholder="输入密码" v-model="registerinfo.password" class="input">
+			<u-icon :name="Icon" size="20" class="eyes" @click="flag=!flag"></u-icon>
+		</view>
 	</view>
 	<view class="checkCode">
 		验证码：
 		<view style="display: flex;align-items: center;justify-content: space-between;">
-				<input type="text" >
+				<input type="text"  v-model="registerinfo.checkCode">
 				<button @click="getCode()">发送验证码</button>
 		</view>
 	</view>
@@ -28,12 +35,18 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 </template>
 
 <script>
-import {getCode} from '@/api/user.js'
+import {getCode,register} from '@/api/user.js'
 import {emailRegex} from '@/utils/regular.js'
 export default {
 	data() {
 		return {
-			email:'444186682@qq.com',
+			flag:0,
+			registerinfo:{
+				email:'',
+				checkCode:"",
+				password:"",					
+			}
+		
 		}
 	}, 
 	methods:{
@@ -43,8 +56,8 @@ export default {
 			})
 		},
 		async getCode(){
-			if(emailRegex(this.email)){
-				let result=await getCode(this.email)
+			if(emailRegex(this.registerinfo.email)){
+				let result=await getCode({email:this.registerinfo.email})
 			}
 			else{
 				uni.showToast({
@@ -53,10 +66,26 @@ export default {
 				})
 			}
 		},
-		resgister(){
-			
+		async resgister(){
+			let result=await register(this.registerinfo)
+			if(result.status==200){
+				uni.showToast({
+					icon:'success',
+					title:result.data
+				})
+				this.ToLogin()
+			}
+		
 		}
-	}
+	},
+	computed: {
+		type() {
+			return this.flag ? "text" : "password";
+		},
+		Icon() {
+			return !this.flag ? "eye" : "eye-off"
+		}
+	},
 }
 </script>
 
@@ -76,6 +105,7 @@ export default {
 		border-radius: 6px;
 		padding: 10px 10px 10px 10px;
 		margin-top: 3px;
+		background-color: #ffffff;
 	}
 }
 .checkCode{
@@ -98,6 +128,24 @@ export default {
 	text-align: center;
 	span{
 		color: rgba(255, 195, 0, 0.92);
+	}
+}
+.password{
+	margin: 10px 16px 6px 18px;
+	.password-input {
+		width: 339.5px;
+		height: 48px;
+		border: 1px solid #000;
+		border-radius: 6px;
+		padding: 10px 10px 10px 10px;
+		margin-top: 3px;
+		background-color: #ffffff;
+		.input {
+			border: 0;
+			outline: none;
+			height: 40px;
+			font-size: 15px;
+		}
 	}
 }
 </style>

@@ -36,9 +36,9 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 			<view class="" @click="logintype=!logintype">
 				{{logintype?'验证码':'密码'}}登录
 			</view>
-			<view class="">
+<!-- 			<view class="">
 				忘记密码
-			</view>
+			</view> -->
 		</view>
 		<view class="tores" @click="Tores()">
 			还没有账号？<span>点击开始注册</span>
@@ -62,7 +62,7 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 	export default {
 		data() {
 			return {
-				email: '444186682@qq.com',
+				email: '',
 				checkcodetime: 0,
 				checkcode: "",
 				logintype: 0,
@@ -118,6 +118,7 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 					title: '登录成功',
 					icon: 'success'
 				})
+				uni.removeStorageSync("uploadlist")
 				uni.switchTab({
 					url: "/pages/index/index"
 				})
@@ -213,7 +214,7 @@ box-shadow: 0px -2px 4px 0px rgba(214, 214, 214, 0.25);width: 345px;margin: 20px
 	.passwordlogin {
 		display: flex;
 		margin: 1px 18px;
-		justify-content: space-between;
+		justify-content:center;
 
 		span {
 			color: rgba(255, 195, 0, 0.92);

@@ -33,7 +33,7 @@
 			return {
 				title: 'Hello1',
 				sarchvalue:"",
-				sortbtn:[{type:'default',text:'默认排序'},{type:'default',text:'按点赞排序'},{type:'default',text:'按收藏数排序'}],
+				sortbtn:[{type:'default',text:'默认排序'},{type:'default',text:'按点赞数排序'},{type:'default',text:'按收藏数排序'}],
 				currentTab:0,
 				searchinfo:{
 					current:1,
