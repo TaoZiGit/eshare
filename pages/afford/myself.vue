@@ -61,6 +61,7 @@
 				this.listinfo.userid = this.info.id
 				let result = await HistoryAll(this.listinfo)
 				this.list = result.data.datalist;
+				this.list=this.list.filter(item=>item.type==0)
 			},
 			Todeatil(id) {
 				uni.navigateTo({

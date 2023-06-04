@@ -2,8 +2,8 @@
     "name" : "eshare",
     "appid" : "__UNI__E8ABC56",
     "description" : "校园交易平台",
-    "versionName" : "1.0.9",
-    "versionCode" : 109,
+    "versionName" : "1.1.4",
+    "versionCode" : 114,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

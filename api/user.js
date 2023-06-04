@@ -120,4 +120,13 @@ export const PayBuy=async(data)=>{
 	UserGetUserMessage()
 	return result
 }
-
+export const NoticeAll=async(data)=>{
+	let result =await api({
+		url:'/notice/all',
+		method:'GET',
+		data,
+		headers:{token:getToken()},
+	})
+	UserGetUserMessage()
+	return result
+}

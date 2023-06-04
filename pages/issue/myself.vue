@@ -31,7 +31,7 @@
 				list: [],
 				listinfo: {
 					current: 1,
-					size: 10,
+					size: 30,
 					userid: "",
 					type: 0,
 					order: 0,
@@ -59,6 +59,7 @@
 				let result = await ResourceUserall(this.listinfo)
 				console.log(result)
 				this.list = result.data.resourcesList;
+
 			},
 			Todeatil(id) {
 				console.log(id)

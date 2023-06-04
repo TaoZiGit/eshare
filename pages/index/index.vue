@@ -39,6 +39,9 @@
 			</ul>
 		</view>
 		<Lists :list="indexlist" />
+		<uni-popup ref="popup" type='center' >
+			<uni-popup-dialog type="dialog" cancelText="关闭" confirmText="确定"  :content="`${noticelist.map(item => `${item.content}`).join(',')}`" @confirm="dialogConfirm" @close="dialogClose" ></uni-popup-dialog>
+		</uni-popup>
 	</view>
 
 </template>
@@ -55,7 +58,8 @@
 		ResourceSearch
 	} from '@/api/resource.js'
 	import {
-		UserGetUserMessage
+		UserGetUserMessage,
+		NoticeAll
 	} from '@/api/user.js'
 	import {
 		mapState
@@ -81,17 +85,17 @@
 				currentTab: 0,
 				pagelist: {
 					current: 1,
-					size: 3,
-					type: 0,
+					size: 10,
 					order: 1,
 				},
 				indexlist: [],
+				noticelist:[],
 			}
 		},
 		onLoad() {
 			this.getuserList()
 			this.getlist()
-
+			this.getnotice()
 		},
 		onPullDownRefresh() {
 			this.getuserList()
@@ -105,9 +109,23 @@
 			this.getlist();
 		},
 		methods: {
+			dialogConfirm(){
+				
+			},
+			dialogClose(){
+				
+			},
+			async getnotice(){
+				let result=await NoticeAll({currect:1,size:10})
+				console.log(result)
+				this.noticelist=result.data.noticeList
+				if(!result.total){
+					this.$refs.popup.open('center')
+				}
+			},
 			changesearch(index) {
 				this.currentTab = index;
-				this.pagelist.type = index;
+				this.pagelist.order = index;
 				this.pagelist.current = 1;
 				this.indexlist = [],
 				this.getlist();

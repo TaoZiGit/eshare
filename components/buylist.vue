@@ -86,41 +86,52 @@
 				}
 			},
 			download(item) {
-				// uni.showLoading({
-				// 	title:'下载中',
-				// })
-				let url = JSON.parse(item.url)		
-				for (let file of url) {
-					uni.downloadFile({
-						url: file.url,
-						success: (res) => {
-							if (res.statusCode == 200) {
-								uni.saveFile({
-									tempFilePath: res.tempFilePath,
-									success: function(res) {
-										let list=uni.getStorageSync('uploadlist');
-										let arrnew;
-										if(list.length){
-											arrnew=list;
-											let newobj={path:res.savedFilePath,name:file.name};
-											arrnew.unshift(newobj);
-										}
-										else{
-											arrnew=[{path:res.savedFilePath,name:file.name}];	
-										}
-										uni.setStorageSync('uploadlist',arrnew);
-										uni.$emit("updateupload",{});
-										
-									}
-								});
-							}
-						}
-					});
-				}
-				uni.hideLoading()
-				uni.showToast({
-					icon: 'success',
-					title: '下载成功'
+				uni.showLoading({
+					title: '下载中',
+				})
+				const urlList = JSON.parse(item.url)
+				const tasks = urlList.map(file => {
+					return new Promise((resolve, reject) => {
+						uni.downloadFile({
+							url: file.url,
+							success: (res) => {
+								if (res.statusCode === 200) {
+									uni.saveFile({
+										tempFilePath: res.tempFilePath,
+										success: (res) => {
+											resolve({
+												path: res.savedFilePath,
+												name: file.name
+											})
+										},
+										fail: reject
+									})
+								} else {
+									reject(new Error(
+										`Download file ${file.name} failed with status code ${res.statusCode}`
+										))
+								}
+							},
+							fail: reject
+						})
+					})
+				})
+				Promise.all(tasks).then((res) => {
+					const list = uni.getStorageSync('uploadlist') || []
+					const arrnew = [...list, ...res];
+					uni.setStorageSync('uploadlist', arrnew)
+					uni.$emit('updateupload', {})
+					uni.hideLoading()
+					uni.showToast({
+						icon: 'success',
+						title: '下载成功'
+					})
+				}).catch((err) => {
+					uni.hideLoading()
+					uni.showToast({
+						icon: 'none',
+						title: `下载失败：${err.message}`
+					})
 				})
 			},
 			dialogClose() {
